@@ -10,3 +10,7 @@ Other (much more advanced) forks of [[https://github.com/gjkerns/ob-julia][the g
 
 * License
   This package is under a [[https://en.wikipedia.org/wiki/CeCILL][CeCILL 2.1 license]], which is compatible with GPL license.
+
+* Progress status
+** Estimated progress
+   0% :-)
