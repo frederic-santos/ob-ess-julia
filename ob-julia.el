@@ -3,7 +3,7 @@
 ;; Copyright (C) 2020 Frédéric Santos
 
 ;; Author: Frédéric Santos
-;; Version: 0.0
+;; Version: 2020-09-25
 ;; Keywords: babel, julia, literate programming, org
 ;; URL: https://gitlab.com/f-santos/ob-julia
 
@@ -16,6 +16,18 @@
 ;;; Code:
 (require 'cl-lib)
 (require 'ob)
+
+;; How Julia should be called to execute source blocks:
+(defcustom org-babel-julia-command "julia"
+  "Name of command to use for executing Julia code."
+  :group 'org-babel
+  :package-version '(ob-julia . "2020-09-25")
+  :version "27.1"
+  :type 'string)
+
+;; Defaults for Julia session and headers:
+(defvar org-babel-default-header-args:julia '())
+(defvar org-babel-julia-default-session "*julia*")
 
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
