@@ -29,5 +29,8 @@
 (defvar org-babel-default-header-args:julia '())
 (defvar org-babel-julia-default-session "*julia*")
 
+;; Extension to tangle Julia source code:
+(add-to-list 'org-babel-tangle-lang-exts '("julia" . "jl"))
+
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
