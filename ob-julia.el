@@ -29,6 +29,15 @@
 (defvar org-babel-default-header-args:julia '())
 (defvar org-babel-julia-default-session "*julia*")
 
+;; Header args supported for Julia
+;; (see `org-babel-insert-result'):
+(defconst org-babel-header-args:julia
+  '((results . ((file list scalar table vector verbatim)
+		(raw html latex)
+		(replace append none prepend silent)
+		(output graphics value))))
+  "Julia-specific header arguments.")
+
 ;; Extension to tangle Julia source code:
 (add-to-list 'org-babel-tangle-lang-exts '("julia" . "jl"))
 
