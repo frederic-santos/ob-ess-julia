@@ -1,7 +1,7 @@
 ;;; ob-julia --- Org babel support for Julia language
 
 ;; Copyright (C) 2020 Frédéric Santos
-;; Adapted from G. J. Kerns' ob-julia.
+;; Based on G. J. Kerns' ob-julia.
 
 ;; Author: Frédéric Santos
 ;; Version: 2020-09-25
@@ -15,6 +15,7 @@
 ;; in Org mode.  It is still at a very early stage of development.
 
 ;;; Code:
+
 (require 'cl-lib)
 (require 'ess)
 (require 'ob)
@@ -29,8 +30,7 @@
 
 ;; Defaults for Julia session and headers:
 (defvar org-babel-default-header-args:julia '())
-(defvar org-babel-julia-default-session
-  "*julia*"
+(defvar org-babel-julia-default-session "*julia*"
   "Default name given to a fresh new Julia session.")
 
 ;; Header args supported for Julia
@@ -41,9 +41,6 @@
 		(replace append none prepend silent)
 		(output graphics value))))
   "Julia-specific header arguments.")
-
-;; Extension to tangle Julia source code:
-(add-to-list 'org-babel-tangle-lang-exts '("julia" . "jl"))
 
 ;; Create Julia session:
 (defun org-babel-julia-initiate-session (session params)
