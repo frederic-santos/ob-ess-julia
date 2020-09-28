@@ -16,9 +16,17 @@
 
 ;;; Code:
 
+;; Required packages:
 (require 'cl-lib)
 (require 'ess)
 (require 'ob)
+
+;; External functions from ESS:
+(declare-function inferior-ess-send-input "ext:ess-inf" ())
+(declare-function ess-make-buffer-current "ext:ess-inf" ())
+(declare-function ess-eval-buffer "ext:ess-inf" (vis))
+(declare-function ess-wait-for-process "ext:ess-inf"
+		  (&optional proc sec-prompt wait force-redisplay))
 
 ;; How Julia should be called to execute source blocks:
 (defcustom org-babel-julia-command "julia"
