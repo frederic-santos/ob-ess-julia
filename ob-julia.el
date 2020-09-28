@@ -70,5 +70,17 @@ PARAMS are user-specified src block parameters."
 	       (buffer-name))))
 	  (current-buffer))))))
 
+(defun org-babel-julia-evaluate
+  (session body result-type result-params column-names-p row-names-p)
+  "Evaluate Julia code in BODY.
+This can be done either within an existing SESSION, or with an external process.
+This function only makes the convenient redirection towards the targeted
+helper function, depending on this parameter."
+  (if session
+      (org-babel-julia-evaluate-session
+       session body result-type result-params column-names-p row-names-p)
+    (org-babel-julia-evaluate-external-process
+     body result-type result-params column-names-p row-names-p)))
+
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
