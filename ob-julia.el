@@ -45,7 +45,19 @@
 ;; Set default extension to tangle Julia code:
 (add-to-list 'org-babel-tangle-lang-exts '("julia" . "jl"))
 
-;; Create Julia session:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Handling Julia sessions ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun org-babel-edit-prep:julia (info)
+"Function to edit Julia code in OrgSrc mode.
+(I.e., for use with, and is called by, `org-edit-src-code'.)
+INFO is a list as returned by `org-babel-get-src-block-info'."
+  (let ((session (cdr (assq :session (nth 2 info)))))
+    (when (and session
+	       (string-prefix-p "*" session)
+	       (string-suffix-p "*" session))
+      (org-babel-julia-initiate-session session nil))))
+
 (defun org-babel-julia-initiate-session (session params)
   "Create a Julia process if there is no active SESSION yet.
 SESSION is a string; check whether the associated buffer is a comint buffer.
@@ -72,8 +84,11 @@ PARAMS are user-specified src block parameters."
 
 ;; Retrieve ESS process info:
 (defvar ess-current-process-name) ; dynamically scoped
-(defvar ess-local-process-name) ; dynamically scoped
+(defvar ess-local-process-name)   ; dynamically scoped
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Executing Julia source blocks ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defun org-babel-julia-evaluate
   (session body result-type result-params column-names-p row-names-p)
   "Evaluate Julia code in BODY.
