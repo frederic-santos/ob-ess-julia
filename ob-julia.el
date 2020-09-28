@@ -28,7 +28,8 @@
 (declare-function ess-wait-for-process "ext:ess-inf"
 		  (&optional proc sec-prompt wait force-redisplay))
 
-;; How Julia should be called to execute source blocks:
+;; Julia will be called as an ESS process:
+(declare-function julia "ext:ess-julia" (&optional start-args))
 (defcustom org-babel-julia-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
