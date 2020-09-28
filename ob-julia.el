@@ -85,6 +85,7 @@ PARAMS are user-specified src block parameters."
 ;; Retrieve ESS process info:
 (defvar ess-current-process-name) ; dynamically scoped
 (defvar ess-local-process-name)   ; dynamically scoped
+(defvar ess-ask-for-ess-directory) ; dynamically scoped
 
 (defun org-babel-edit-prep:julia (info)
 "Function to edit Julia code in OrgSrc mode.
