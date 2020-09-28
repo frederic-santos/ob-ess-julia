@@ -42,6 +42,9 @@
 		(output graphics value))))
   "Julia-specific header arguments.")
 
+;; Set default extension to tangle Julia code:
+(add-to-list 'org-babel-tangle-lang-exts '("julia" . "jl"))
+
 ;; Create Julia session:
 (defun org-babel-julia-initiate-session (session params)
   "Create a Julia process if there is no active SESSION yet.
