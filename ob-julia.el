@@ -70,6 +70,10 @@ PARAMS are user-specified src block parameters."
 	       (buffer-name))))
 	  (current-buffer))))))
 
+;; Retrieve ESS process info:
+(defvar ess-current-process-name) ; dynamically scoped
+(defvar ess-local-process-name) ; dynamically scoped
+
 (defun org-babel-julia-evaluate
   (session body result-type result-params column-names-p row-names-p)
   "Evaluate Julia code in BODY.
