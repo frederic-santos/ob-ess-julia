@@ -48,15 +48,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Handling Julia sessions ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defun org-babel-edit-prep:julia (info)
-"Function to edit Julia code in OrgSrc mode.
-(I.e., for use with, and is called by, `org-edit-src-code'.)
-INFO is a list as returned by `org-babel-get-src-block-info'."
-  (let ((session (cdr (assq :session (nth 2 info)))))
-    (when (and session
-	       (string-prefix-p "*" session)
-	       (string-suffix-p "*" session))
-      (org-babel-julia-initiate-session session nil))))
 
 (defun org-babel-julia-initiate-session (session params)
   "Create a Julia process if there is no active SESSION yet.
@@ -86,9 +77,20 @@ PARAMS are user-specified src block parameters."
 (defvar ess-current-process-name) ; dynamically scoped
 (defvar ess-local-process-name)   ; dynamically scoped
 
+(defun org-babel-edit-prep:julia (info)
+"Function to edit Julia code in OrgSrc mode.
+(I.e., for use with, and is called by, `org-edit-src-code'.)
+INFO is a list as returned by `org-babel-get-src-block-info'."
+  (let ((session (cdr (assq :session (nth 2 info)))))
+    (when (and session
+	       (string-prefix-p "*" session)
+	       (string-suffix-p "*" session))
+      (org-babel-julia-initiate-session session nil))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Executing Julia source blocks ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun org-babel-julia-evaluate
   (session body result-type result-params column-names-p row-names-p)
   "Evaluate Julia code in BODY.
@@ -100,6 +102,21 @@ helper function, depending on this parameter."
        session body result-type result-params column-names-p row-names-p)
     (org-babel-julia-evaluate-external-process
      body result-type result-params column-names-p row-names-p)))
+
+(defun org-babel-expand-body:julia (body params &optional _graphics-file)
+  "Expand BODY according to PARAMS, return the expanded body.
+I.e., add :prologue and :epilogue to BODY if required, as well as new Julia
+variables declared from :var.  The 'expanded body' is actually the union set
+of BODY and of all those instructions."
+  (mapconcat 'identity
+	     (append
+	      (when (cdr (assq :prologue params))
+		(list (cdr (assq :prologue params))))
+	      (org-babel-variable-assignments:julia params)
+	      (list body)
+	      (when (cdr (assq :epilogue params))
+		(list (cdr (assq :epilogue params)))))
+	     "\n"))
 
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
