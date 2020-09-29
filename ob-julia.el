@@ -153,7 +153,11 @@ of BODY and of all those instructions."
 If RESULT-TYPE equals `output' then return standard output as a
 string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
-  (message "Not implemented yet :-)"))
+  (if (equal result-type 'output)
+      (org-babel-eval org-babel-julia-command body)
+    ;; else: result-type != "output"
+    (when (equal result-type 'value)
+      (message "Not implemented yet :-)"))))
 
 (defun org-babel-julia-evaluate-session
     (session body result-type result-params column-names-p row-names-p)
@@ -161,7 +165,7 @@ last statement in BODY, as elisp."
 If RESULT-TYPE equals `output' then return standard output as a
 string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
-  (message "Not implemented yet :-)"))
+  (message "You want to use session %s but this does not work yet :-)" session))
 
 (defun org-babel-execute:julia (body params)
   "Execute a block of Julia code.
@@ -170,8 +174,14 @@ according to user-specified PARAMS.
 This function is called by `org-babel-execute-src-block'."
   (let* ((session-name (cdr (assq :session params)))
          (session (org-babel-julia-initiate-session session-name params))
-         (expanded-body (org-babel-expand-body:julia body params)))
-    (message "You are using session %s but this does not work yet :-)" session-name)))
+         (expanded-body (org-babel-expand-body:julia body params))
+         (result-params (cdr (assq :result-params params)))
+	 (result-type (cdr (assq :result-type params)))
+         (result (org-babel-julia-evaluate
+                                  session expanded-body result-type result-params
+                                  ;; TODO: handle correctly the following two args
+                                  nil nil)))
+    result))
 
 (provide 'ob-julia)
 ;;; ob-julia.el ends here

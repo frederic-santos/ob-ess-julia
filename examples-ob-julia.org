@@ -1,18 +1,20 @@
 #+TITLE: Examples of code blocks with ob-julia
 #+AUTHOR: Frédéric Santos
 
-* Evaluation within a session
-#+BEGIN_SRC julia :results output :session *mysession* :exports both
-println("Hello world!")
-#+END_SRC
-
-#+RESULTS:
-: You are using session *mysession* but this does not work yet :-)
-
-* External evaluation
+* IN-PROGRESS External evaluation
+If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process:
 #+BEGIN_SRC julia :results output :exports both
 println("Hello world!")
 #+END_SRC
 
 #+RESULTS:
-: You are using session none but this does not work yet :-)
+: Hello world!
+
+* TODO Evaluation within a session
+Evaluation of several code blocks within a given session is not supported yet.
+#+BEGIN_SRC julia :results output :session *juliasession* :exports both
+println("Hello world!")
+#+END_SRC
+
+#+RESULTS:
+: You want to use session *juliasession* but this does not work yet :-)
