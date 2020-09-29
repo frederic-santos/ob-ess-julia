@@ -1,0 +1,6 @@
+#+TITLE: Examples of code blocks with ob-julia
+#+AUTHOR: Frédéric Santos
+
+#+BEGIN_SRC julia :results output
+println("Hello world!")
+#+END_SRC
