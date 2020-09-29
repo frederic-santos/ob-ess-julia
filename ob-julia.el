@@ -154,7 +154,7 @@ This function is called by `org-babel-execute-src-block'."
   (let* ((session-name (cdr (assq :session params)))
          (session (org-babel-julia-initiate-session session-name params))
          (expanded-body (org-babel-expand-body:julia body params)))
-    (message session-name)))
+    (message "You are using session %s but this does not work yet :-)" session-name)))
 
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
