@@ -1,6 +1,6 @@
 ;;; ob-julia --- Org babel support for Julia language
 
-;; Copyright (C) 2020 Frédéric Santos
+;; Copyright (C) 2020
 ;; Based on / forked from G. J. Kerns' ob-julia.
 ;; See the original version at https://github.com/gjkerns/ob-julia
 
