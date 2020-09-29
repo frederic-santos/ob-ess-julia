@@ -1,9 +1,18 @@
 #+TITLE: Examples of code blocks with ob-julia
 #+AUTHOR: Frédéric Santos
 
+* Evaluation within a session
 #+BEGIN_SRC julia :results output :session *mysession* :exports both
 println("Hello world!")
 #+END_SRC
 
 #+RESULTS:
 : You are using session *mysession* but this does not work yet :-)
+
+* External evaluation
+#+BEGIN_SRC julia :results output :exports both
+println("Hello world!")
+#+END_SRC
+
+#+RESULTS:
+: You are using session none but this does not work yet :-)
