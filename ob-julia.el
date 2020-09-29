@@ -82,13 +82,13 @@ PARAMS are user-specified src block parameters."
           (when (get-buffer session)
 	    ;; Session buffer exists, but with dead process
 	    (set-buffer session))
-	  (progn (julia)                       ; create new Julia comint buffer
-	         (rename-buffer
-	          (if (bufferp session)
-	              (buffer-name session)
-	            (if (stringp session)
-		        session
-	              (buffer-name)))))
+	  (run-julia-and-select-buffer) ; create new Julia comint buffer
+	  (rename-buffer
+	   (if (bufferp session)
+	       (buffer-name session)
+	     (if (stringp session)
+		 session
+	       (buffer-name))))
 	  (current-buffer))))))
 
 ;; Retrieve ESS process info:
