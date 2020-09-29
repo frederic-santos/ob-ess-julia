@@ -37,6 +37,12 @@
   :version "27.1"
   :type 'string)
 
+(defun run-julia-and-select-buffer (&optional start-args)
+  "Run Julia and make sure that its inferior buffer will be active.
+START-ARGS is passed to `run-ess-julia'."
+  (interactive "P")
+  (set-buffer (julia start-args)))
+
 ;; Defaults for Julia session and headers:
 (defvar org-babel-default-header-args:julia '())
 (defvar org-babel-julia-default-session "*julia*"
