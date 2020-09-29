@@ -1,10 +1,11 @@
 ;;; ob-julia --- Org babel support for Julia language
 
 ;; Copyright (C) 2020 Frédéric Santos
-;; Based on G. J. Kerns' ob-julia.
+;; Based on / forked from G. J. Kerns' ob-julia.
+;; See the original version at https://github.com/gjkerns/ob-julia
 
 ;; Author: Frédéric Santos
-;; Version: 2020-09-25
+;; Version: 2020-09-29
 ;; Keywords: babel, julia, literate programming, org
 ;; URL: https://gitlab.com/f-santos/ob-julia
 
@@ -33,7 +34,7 @@
 (defcustom org-babel-julia-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
-  :package-version '(ob-julia . "2020-09-25")
+  :package-version '(ob-julia . "2020-09-29")
   :version "27.1"
   :type 'string)
 
