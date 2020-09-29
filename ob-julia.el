@@ -104,6 +104,7 @@ current code buffer."
 (defvar ess-current-process-name)       ; dynamically scoped
 (defvar ess-local-process-name)         ; dynamically scoped
 (defvar ess-ask-for-ess-directory)      ; dynamically scoped
+(defvar ess-eval-visibly-p)
 
 (defun org-babel-edit-prep:julia (info)
 "Function to edit Julia code in OrgSrc mode.
@@ -145,6 +146,22 @@ of BODY and of all those instructions."
 	      (when (cdr (assq :epilogue params))
 		(list (cdr (assq :epilogue params)))))
 	     "\n"))
+
+(defun org-babel-julia-evaluate-external-process
+    (body result-type result-params column-names-p row-names-p)
+  "Evaluate BODY in an external Julia process.
+If RESULT-TYPE equals `output' then return standard output as a
+string.  If RESULT-TYPE equals `value' then return the value of the
+last statement in BODY, as elisp."
+  (message "Not implemented yet :-)"))
+
+(defun org-babel-julia-evaluate-session
+    (session body result-type result-params column-names-p row-names-p)
+  "Evaluate BODY in a given Julia SESSION.
+If RESULT-TYPE equals `output' then return standard output as a
+string.  If RESULT-TYPE equals `value' then return the value of the
+last statement in BODY, as elisp."
+  (message "Not implemented yet :-)"))
 
 (defun org-babel-execute:julia (body params)
   "Execute a block of Julia code.
