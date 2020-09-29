@@ -4,3 +4,6 @@
 #+BEGIN_SRC julia :results output
 println("Hello world!")
 #+END_SRC
+
+#+RESULTS:
+: *bouh*

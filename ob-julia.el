@@ -73,19 +73,22 @@ PARAMS are user-specified src block parameters."
       (if (org-babel-comint-buffer-livep session)
 	  session                       ; session already exists
 	(save-window-excursion
-	  (julia)                       ; create new Julia comint buffer
-	  (rename-buffer
-	   (if (bufferp session)
-	       (buffer-name session)
-	     (if (stringp session)
-		 session
-	       (buffer-name))))
+          (when (get-buffer session)
+	    ;; Session buffer exists, but with dead process
+	    (set-buffer session))
+	  (progn (julia)                       ; create new Julia comint buffer
+	         (rename-buffer
+	          (if (bufferp session)
+	              (buffer-name session)
+	            (if (stringp session)
+		        session
+	              (buffer-name)))))
 	  (current-buffer))))))
 
 ;; Retrieve ESS process info:
-(defvar ess-current-process-name) ; dynamically scoped
-(defvar ess-local-process-name)   ; dynamically scoped
-(defvar ess-ask-for-ess-directory) ; dynamically scoped
+(defvar ess-current-process-name)       ; dynamically scoped
+(defvar ess-local-process-name)         ; dynamically scoped
+(defvar ess-ask-for-ess-directory)      ; dynamically scoped
 
 (defun org-babel-edit-prep:julia (info)
 "Function to edit Julia code in OrgSrc mode.
@@ -122,11 +125,21 @@ of BODY and of all those instructions."
 	     (append
 	      (when (cdr (assq :prologue params))
 		(list (cdr (assq :prologue params))))
-	      (org-babel-variable-assignments:julia params)
+	      ;; TODO: (org-babel-variable-assignments:julia params)
 	      (list body)
 	      (when (cdr (assq :epilogue params))
 		(list (cdr (assq :epilogue params)))))
 	     "\n"))
+
+(defun org-babel-execute:julia (body params)
+  "Execute a block of Julia code.
+The BODY on the block is first refactored with `org-babel-expand-body:julia',
+according to user-specified PARAMS.
+This function is called by `org-babel-execute-src-block'."
+  (let* ((session-name (cdr (assq :session params)))
+         (session (org-babel-julia-initiate-session session-name params))
+         (expanded-body (org-babel-expand-body:julia body params)))
+    (message session-name)))
 
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
