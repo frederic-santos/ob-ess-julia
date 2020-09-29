@@ -10,6 +10,8 @@ println("Hello world!")
 #+RESULTS:
 : Hello world!
 
+Only ~:results output~ is supported to date.
+
 * TODO Evaluation within a session
 Evaluation of several code blocks within a given session is not supported yet.
 #+BEGIN_SRC julia :results output :session *juliasession* :exports both

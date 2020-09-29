@@ -6,7 +6,7 @@ Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a
 Other (much more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good old ob-julia]] have been made available by various authors: [[https://git.nixo.xyz/nixo/ob-julia][an example here]]. Those forks are clearly the best (I should say, the /only/) solution for now.
 
 * Progress status
-The estimated progress is about 1 % :-)
+The estimated progress is about 2 % :-)
 
 * Disclaimer
 My current knowledge of both Julia and Elisp is very limited, so that the present repo is essentially a sandbox, and should absolutely not be considered for public use yet. Trying to make another fork of ~ob-julia~ is primarily a way of improving my knowledge in those two languages with a challenging project. However, all contributions are welcome.
