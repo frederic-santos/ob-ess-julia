@@ -92,6 +92,15 @@ PARAMS are user-specified src block parameters."
 	  (current-buffer))))))
 
 ;; Retrieve ESS process info:
+(defun org-babel-julia-associate-session (session)
+  "Associate Julia code buffer with an ESS[Julia] session.
+See function `org-src-associate-babel-session'.
+Make SESSION be the inferior ESS process associated with the
+current code buffer."
+  (setq ess-local-process-name
+	(process-name (get-buffer-process session)))
+  (ess-make-buffer-current))
+
 (defvar ess-current-process-name)       ; dynamically scoped
 (defvar ess-local-process-name)         ; dynamically scoped
 (defvar ess-ask-for-ess-directory)      ; dynamically scoped
