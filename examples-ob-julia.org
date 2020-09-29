@@ -6,4 +6,4 @@ println("Hello world!")
 #+END_SRC
 
 #+RESULTS:
-: *mysession*
+: You are using session *mysession* but this does not work yet :-)
