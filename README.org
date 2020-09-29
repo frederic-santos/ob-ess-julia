@@ -8,6 +8,8 @@ Other (much more advanced) forks of [[https://github.com/gjkerns/ob-julia][the g
 * Progress status
 The estimated progress is about 2 % :-)
 
+Some examples of implemented features can be found in the file ~examples-ob-julia.org~.
+
 * Disclaimer
 My current knowledge of both Julia and Elisp is very limited, so that the present repo is essentially a sandbox, and should absolutely not be considered for public use yet. Trying to make another fork of ~ob-julia~ is primarily a way of improving my knowledge in those two languages with a challenging project. However, all contributions are welcome.
 
