@@ -1,6 +1,6 @@
 #+TITLE: Examples of code blocks with ob-julia
 #+AUTHOR: Frédéric Santos
-#OPTIONS: todo:t
+#+OPTIONS: todo:t
 
 * IN-PROGRESS External evaluation
 If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process:
