@@ -1,9 +1,9 @@
 #+TITLE: Examples of code blocks with ob-julia
 #+AUTHOR: Frédéric Santos
 
-#+BEGIN_SRC julia :results output
+#+BEGIN_SRC julia :results output :session *mysession*
 println("Hello world!")
 #+END_SRC
 
 #+RESULTS:
-: *bouh*
+: *mysession*
