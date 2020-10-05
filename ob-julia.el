@@ -47,6 +47,16 @@ START-ARGS is passed to `run-ess-julia'."
   (interactive "P")
   (set-buffer (julia start-args)))
 
+(defvar ob-julia-startup
+  (concat
+   (file-name-directory (buffer-file-name))
+   "ob-julia-startup.jl")
+  "File path for startup Julia script."
+  :group 'org-babel
+  :package-version '(ob-julia . "2020-10-05")
+  :version "27.1"
+  :type 'string)
+
 ;; Defaults for Julia session and headers:
 (defvar org-babel-default-header-args:julia '())
 (defvar org-babel-julia-default-session "*julia*"
