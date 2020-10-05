@@ -179,7 +179,12 @@ last statement in BODY, as elisp."
       (org-babel-eval org-babel-julia-command body)
     ;; else: result-type != "output"
     (when (equal result-type 'value)
-      (message "Not implemented yet :-)"))))
+      (let ((tmp-file (org-babel-temp-file "julia-")))
+        (org-babel-eval org-babel-julia-command
+                        (format org-babel-julia-write-object-command
+                                (org-babel-process-file-name tmp-file 'noquote)
+                                (format "begin\n%s\nend" body)))
+        (message "Not implemented yet :-)")))))
 
 (defun org-babel-julia-evaluate-session
     (session body result-type result-params column-names-p row-names-p)
