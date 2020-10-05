@@ -48,8 +48,7 @@ START-ARGS is passed to `run-ess-julia'."
   (set-buffer (julia start-args)))
 
 (defvar ob-julia-startup
-  (concat
-   (file-name-directory (buffer-file-name))
+  (concat (file-name-directory (buffer-file-name)))
    "ob-julia-startup.jl")
   "File path for startup Julia script."
   :group 'org-babel
