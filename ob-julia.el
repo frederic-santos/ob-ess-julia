@@ -1,11 +1,14 @@
 ;;; ob-julia --- Org babel support for Julia language
 
 ;; Copyright (C) 2020
-;; Based on / forked from G. J. Kerns' ob-julia.
-;; See the original version at https://github.com/gjkerns/ob-julia
+;; Credits:
+;; - Primarily based on / forked from G. J. Kerns' ob-julia.
+;;   See the original version at https://github.com/gjkerns/ob-julia
+;; - Also based on ob-R.el by Eric Schulte and Dan Davison,
+;;   for consistency with other ob-* backends.
 
 ;; Author: Frédéric Santos
-;; Version: 2020-09-29
+;; Version: 2020-05-10
 ;; Keywords: babel, julia, literate programming, org
 ;; URL: https://gitlab.com/f-santos/ob-julia
 
@@ -34,7 +37,7 @@
 (defcustom org-babel-julia-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
-  :package-version '(ob-julia . "2020-09-29")
+  :package-version '(ob-julia . "2020-10-05")
   :version "27.1"
   :type 'string)
 
@@ -147,6 +150,14 @@ of BODY and of all those instructions."
 	      (when (cdr (assq :epilogue params))
 		(list (cdr (assq :epilogue params)))))
 	     "\n"))
+
+(defconst org-babel-julia-write-object-command
+  "writedlm(\"%s\", %s)"
+  "A template for Julia to evaluate a block of code and write the result to a file.
+
+Has two %s escapes to be filled in:
+1. The code to be run (must be an expression, not a statement)
+2. The name of the file to write to")
 
 (defun org-babel-julia-evaluate-external-process
     (body result-type result-params column-names-p row-names-p)
