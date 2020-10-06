@@ -1,20 +1,24 @@
 #+TITLE: ob-julia, Julia support for Org mode
 #+AUTHOR: Frédéric Santos
 
-Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a-new-ob-julia/46308/9][my proposition on Julia discourse forum]], this repo intends to offer (maybe, one day...) a support for Julia language into Org mode. *This is still an incomplete implementation to date.*
+Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a-new-ob-julia/46308/9][my proposition on Julia discourse forum]], this repo intends to offer (maybe, one day...) a support for Julia language into Org mode. *This is still a very incomplete implementation to date.*
 
 Other (much more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good old ob-julia]] have been made available by various authors: [[https://git.nixo.xyz/nixo/ob-julia][an example here]]. Those forks are clearly the best (I should say, the /only/) solution for now.
 
 * Progress status
-The estimated progress is about 2 % :-)
+The estimated progress is about 5 % :-)
 
 Some examples of implemented features can be found in the file ~examples-ob-julia.org~.
 
 * Disclaimer
 My current knowledge of both Julia and Elisp is very limited, so that the present repo is essentially a sandbox, and should absolutely not be considered for public use yet. Trying to make another fork of ~ob-julia~ is primarily a way of improving my knowledge in those two languages with a challenging project. However, all contributions are welcome.
 
+* Notes
+(This section is still to be expanded.)
+
+- ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
+- The following Julia packages are required, and /must/ be installed: ~CSV~, ~DataFrames~, ~DelimitedFiles~. Those packages are used for the ~:result value~ output types. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-julia~.
+
 * License
 This package is under a [[https://en.wikipedia.org/wiki/CeCILL][CeCILL 2.1 license]], which is compatible with GPL license.
 
-* Documentation
-- ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
