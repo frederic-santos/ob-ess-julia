@@ -30,7 +30,7 @@ This is only supported with basic Julia types to date. Non-native data structure
 
 *** DONE Arrays
     CLOSED: [2020-10-06 mar. 18:32]
-#+begin_src julia :results value
+#+begin_src julia :results value :exports both
 a = [1 2 3 4]
 a
 #+end_src
@@ -40,7 +40,7 @@ a
 
 *** DONE Dictionaries
     CLOSED: [2020-10-06 mar. 18:33]
-#+begin_src julia :results value
+#+begin_src julia :results value :exports both
 d = Dict("Emacs" => "awesome", "Julia" => "nice")
 d
 #+end_src
@@ -51,7 +51,7 @@ d
 
 *** DONE Tuples
     CLOSED: [2020-10-06 mar. 18:35]
-#+begin_src julia :results value
+#+begin_src julia :results value :exports both
 t = ("org", "mode", "is", "great")
 t
 #+end_src
