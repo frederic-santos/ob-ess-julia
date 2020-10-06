@@ -176,11 +176,20 @@ last statement in BODY, as elisp."
     ;; else: result-type != "output"
     (when (equal result-type 'value)
       (let ((tmp-file (org-babel-temp-file "julia-")))
-        (org-babel-eval org-babel-julia-command
-                        (format org-babel-julia-write-object-command
-                                (org-babel-process-file-name tmp-file 'noquote)
-                                (format "begin\n%s\nend" body)))
-        (message "Not implemented yet :-)")))))
+        (org-babel-eval
+         (concat org-babel-julia-command
+                 " "
+                 (format "--load=%s" ob-julia-startup))
+         (format org-babel-julia-write-object-command
+                 (org-babel-process-file-name tmp-file 'noquote)
+                 (format "begin\n%s\nend" body)))
+        (org-babel-julia-process-value-result
+	 (org-babel-result-cond result-params
+	   (with-temp-buffer
+	     (insert-file-contents tmp-file)
+	     (buffer-string))
+	   (org-babel-import-elisp-from-file tmp-file "\t"))
+	 column-names-p)))))
 
 (defun org-babel-julia-evaluate-session
     (session body result-type result-params column-names-p row-names-p)
@@ -204,6 +213,16 @@ This function is called by `org-babel-execute-src-block'."
                                   session expanded-body result-type result-params
                                   ;; TODO: handle correctly the following two args
                                   nil nil)))
+    result))
+
+(defun org-babel-julia-process-value-result (result column-names-p)
+  "Julia-specific processing for `:results value' output type.
+RESULT should have been computed upstream (and is typiclly retrieved
+from a temp file).
+Insert hline if column names in output have been requested
+with COLUMN-NAMES-P.  Otherwise RESULT is unchanged."
+  (if column-names-p
+      (cons (car result) (cons 'hline (cdr result)))
     result))
 
 (provide 'ob-julia)
