@@ -215,6 +215,10 @@ This function is called by `org-babel-execute-src-block'."
                                   nil nil)))
     result))
 
+;;;;;;;;;;;;;;;;;;;;;
+;; Various helpers ;;
+;;;;;;;;;;;;;;;;;;;;;
+
 (defun org-babel-julia-process-value-result (result column-names-p)
   "Julia-specific processing for `:results value' output type.
 RESULT should have been computed upstream (and is typiclly retrieved
