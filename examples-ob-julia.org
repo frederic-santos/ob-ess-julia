@@ -1,9 +1,14 @@
 #+TITLE: Examples of code blocks with ob-julia
 #+AUTHOR: Frédéric Santos
 #+OPTIONS: todo:t
+#+STARTUP: noindent
 
 * IN-PROGRESS External evaluation
-If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process:
+If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process.
+
+** IN-PROGRESS With ~:results output~
+Simple (numeric or text) ~:results output~ are supported:
+
 #+BEGIN_SRC julia :results output :exports both
 println("Hello world!")
 #+END_SRC
@@ -11,10 +16,55 @@ println("Hello world!")
 #+RESULTS:
 : Hello world!
 
-Only ~:results output~ is supported to date.
+#+begin_src julia :results output :exports both
+print(2+3)
+#+end_src
+
+#+RESULTS:
+: 5
+
+More complex outputs such as graphic files are still to be supported.
+
+** IN-PROGRESS With ~:results value~
+This is only supported with basic Julia types to date. Non-native data structures, such as DataFrames, are not supported yet.
+
+*** DONE Arrays
+    CLOSED: [2020-10-06 mar. 18:32]
+#+begin_src julia :results value
+a = [1 2 3 4]
+a
+#+end_src
+
+#+RESULTS:
+| 1 | 2 | 3 | 4 |
+
+*** DONE Dictionaries
+    CLOSED: [2020-10-06 mar. 18:33]
+#+begin_src julia :results value
+d = Dict("Emacs" => "awesome", "Julia" => "nice")
+d
+#+end_src
+
+#+RESULTS:
+| Julia | nice    |
+| Emacs | awesome |
+
+*** DONE Tuples
+    CLOSED: [2020-10-06 mar. 18:35]
+#+begin_src julia :results value
+t = ("org", "mode", "is", "great")
+t
+#+end_src
+
+#+RESULTS:
+| org   |
+| mode  |
+| is    |
+| great |
 
 * TODO Evaluation within a session
 Evaluation of several code blocks within a given session is not supported yet.
+
 #+BEGIN_SRC julia :results output :session *juliasession* :exports both
 println("Hello world!")
 #+END_SRC
