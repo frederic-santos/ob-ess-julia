@@ -26,7 +26,7 @@ This package is not (yet?) hosted on MELPA. Thus, simply download the whole Git 
 (This section is still to be expanded.)
 
 - ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
-- The following Julia packages are required, and /must/ be installed: ~CSV~, ~DataFrames~, ~DelimitedFiles~. Those packages are used for the ~:result value~ output types. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-julia~.
+- The following Julia packages are required: ~CSV~, ~DelimitedFiles~. They are used for the ~:result value~ output type. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-julia~.
 
 * License
 This package is under a [[https://en.wikipedia.org/wiki/CeCILL][CeCILL 2.1 license]], which is compatible with GPL license.
