@@ -214,14 +214,18 @@ according to user-specified PARAMS.
 This function is called by `org-babel-execute-src-block'."
   (let* ((session-name (cdr (assq :session params)))
          (session (org-babel-julia-initiate-session session-name params))
+         (graphics-file (org-babel-julia-graphical-output-file params))
          (expanded-body (org-babel-expand-body:julia body params))
          (result-params (cdr (assq :result-params params)))
 	 (result-type (cdr (assq :result-type params)))
          (result (org-babel-julia-evaluate
-                                  session expanded-body result-type result-params
-                                  ;; TODO: handle correctly the following two args
-                                  nil nil)))
-    result))
+                  session expanded-body result-type result-params
+                  ;; TODO: handle correctly the following two args
+                  nil nil)))
+    ;; Return "textual" results, unless they have been written
+    ;; in a graphical output file:
+    (unless graphics-file
+      result)))
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Various helpers ;;
