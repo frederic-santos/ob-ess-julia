@@ -118,6 +118,27 @@ current code buffer."
 (defvar ess-ask-for-ess-directory)      ; dynamically scoped
 (defvar ess-eval-visibly-p)
 
+(defun org-babel-prep-session:julia (session params)
+  "Prepare SESSION according to the header arguments specified in PARAMS."
+  (let* ((session (org-babel-julia-initiate-session session params))
+	 (var-lines (org-babel-variable-assignments:julia params)))
+    (org-babel-comint-in-buffer
+        session                     ; name of buffer for Julia session
+      (mapc (lambda (var)
+              (end-of-line 1) (insert var) (comint-send-input nil t)
+              (org-babel-comint-wait-for-output session))
+            var-lines))
+    session))
+
+(defun org-babel-load-session:julia (session body params)
+  "Load BODY into a given Julia SESSION."
+  (save-window-excursion
+    (let ((buffer (org-babel-prep-session:julia session params)))
+      (with-current-buffer buffer
+        (goto-char (process-mark (get-buffer-process (current-buffer))))
+        (insert (org-babel-chomp body)))
+      buffer)))
+
 (defun org-babel-edit-prep:julia (info)
   "Function to edit Julia code in OrgSrc mode.
 (I.e., for use with, and is called by, `org-edit-src-code'.)
@@ -234,8 +255,8 @@ This function is called by `org-babel-execute-src-block'."
 	 (result-type (cdr (assq :result-type params)))
          (result (org-babel-julia-evaluate
                   session expanded-body result-type result-params
-                  ;; TODO: handle correctly the following two args for tables
                   (if column-names-p "true" "false")
+                  ;; TODO: handle correctly the following last args for rownames
                   nil)))
     ;; Return "textual" results, unless they have been written
     ;; in a graphical output file:
