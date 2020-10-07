@@ -22,10 +22,11 @@ This package is not (yet?) hosted on MELPA. Thus, simply download the whole Git 
 (require 'ob-julia)
 #+end_src
 
+~ob-julia~ is based on [[https://github.com/emacs-ess/ESS][ESS]]. Thus, the Emacs package ~ess~ is required.
+
 ** Notes
 (This section is still to be expanded.)
 
-- ~ob-julia~ is based on [[https://github.com/emacs-ess/ESS][ESS]]. Thus, the Emacs package ~ess~ is required.
 - ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
 - The following Julia packages are required: ~CSV~, ~DelimitedFiles~. They are used for the ~:result value~ output type. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-julia~.
 
