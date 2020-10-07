@@ -47,6 +47,9 @@ START-ARGS is passed to `run-ess-julia'."
   (interactive "P")
   (set-buffer (julia start-args)))
 
+(defconst org-babel-julia-eoe-indicator "print(\"org_babel_julia_eoe\")")
+(defconst org-babel-julia-eoe-output "org_babel_julia_eoe")
+
 (defvar ob-julia-startup
   (concat (file-name-directory (or load-file-name
                                    (buffer-file-name)))
@@ -256,7 +259,11 @@ last statement in BODY, as elisp."
 If RESULT-TYPE equals `output' then return standard output as a
 string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
-  (message "You want to use session %s but this does not work yet :-)" session))
+  (cl-case result-type
+    (value
+     (message "You want to use session %s but this does not work yet :-)" session))
+    (output
+     (message "You want to use session %s but this does not work yet :-)" session))))
 
 (defun org-babel-execute:julia (body params)
   "Execute a block of Julia code.
