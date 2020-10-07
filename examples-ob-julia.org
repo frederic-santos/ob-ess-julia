@@ -3,6 +3,8 @@
 #+OPTIONS: todo:t
 #+STARTUP: noindent
 
+It is better to read this document within Emacs, or to read the raw Org format on Github, so that the header arguments of code blocks can be accessible.
+
 * IN-PROGRESS External evaluation
 If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process.
 
