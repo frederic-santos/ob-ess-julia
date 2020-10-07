@@ -47,8 +47,10 @@ START-ARGS is passed to `run-ess-julia'."
   (interactive "P")
   (set-buffer (julia start-args)))
 
-(defconst org-babel-julia-eoe-indicator "\"org_babel_julia_eoe\"")
-(defconst org-babel-julia-eoe-output "org_babel_julia_eoe")
+(defconst org-babel-julia-eoe-indicator "\"org_babel_julia_eoe\""
+  "See help of `org-babel-comint-with-output'.")
+(defconst org-babel-julia-eoe-output "org_babel_julia_eoe"
+  "See help of `org-babel-comint-with-output'.")
 
 (defvar ob-julia-startup
   (concat (file-name-directory (or load-file-name
@@ -261,7 +263,7 @@ string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
   (cl-case result-type
     (value
-     (message "You want to use session %s but this does not work yet :-)" session))
+     (message "You want to use :results value with :session %s, but this does not work yet :-)" session))
     (output
      (mapconcat
       'org-babel-chomp
