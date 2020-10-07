@@ -6,14 +6,23 @@ Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a
 Other (much more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good old ob-julia]] have been made available by various authors: [[https://git.nixo.xyz/nixo/ob-julia][an example here]]. Those forks are clearly the best (I should say, the /only/) solution for now.
 
 * Progress status
-The estimated progress is about 5 % :-)
+The estimated progress is about 10 % :-)
 
 Some examples of implemented features can be found in the file ~examples-ob-julia.org~.
 
 * Disclaimer
 My current knowledge of both Julia and Elisp is very limited, so that the present repo is essentially a sandbox, and should absolutely not be considered for public use yet. Trying to make another fork of ~ob-julia~ is primarily a way of improving my knowledge in those two languages with a challenging project. However, all contributions are welcome.
 
-* Notes
+* How to use ~ob-julia~
+** Installation
+This package is not (yet?) hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialization file:
+
+#+begin_src emacs-lisp :results output
+(add-to-list 'load-path "/your/path/to/ob-julia/")
+(require 'ob-julia)
+#+end_src
+
+** Notes
 (This section is still to be expanded.)
 
 - ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
