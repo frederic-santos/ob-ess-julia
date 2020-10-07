@@ -119,7 +119,7 @@ current code buffer."
 (defvar ess-eval-visibly-p)
 
 (defun org-babel-edit-prep:julia (info)
-"Function to edit Julia code in OrgSrc mode.
+  "Function to edit Julia code in OrgSrc mode.
 (I.e., for use with, and is called by, `org-edit-src-code'.)
 INFO is a list as returned by `org-babel-get-src-block-info'."
   (let ((session (cdr (assq :session (nth 2 info)))))
@@ -169,8 +169,9 @@ of BODY and of all those instructions."
 (defconst org-babel-julia-write-object-command
   "filename = \"%s\"
 bodycode = %s
+has_header = %s
 try
-    CSV.write(filename, bodycode, delim = \"\\t\")
+    CSV.write(filename, bodycode, delim = \"\\t\", writeheader = has_header)
 catch err
     if isa(err, ArgumentError) | isa(err, MethodError)
         writedlm(filename, bodycode)
@@ -178,9 +179,10 @@ catch err
 end"
   "A template for Julia to evaluate a block of code and write the result to a file.
 
-Has two %s escapes to be filled in:
+Has three %s escapes to be filled in:
 1. The name of the file to write to
-2. The code to be run (must be an expression, not a statement)")
+2. The code to be run (must be an expression, not a statement)
+3. Column names, \"true\" or\"false\" (used for DataFrames only)")
 
 (defun org-babel-julia-evaluate-external-process
     (body result-type result-params column-names-p row-names-p)
@@ -199,7 +201,8 @@ last statement in BODY, as elisp."
                  (format "--load=%s" ob-julia-startup))
          (format org-babel-julia-write-object-command
                  (org-babel-process-file-name tmp-file 'noquote)
-                 (format "begin\n%s\nend" body)))
+                 (format "begin\n%s\nend" body)
+                 column-names-p))
         (org-babel-julia-process-value-result
 	 (org-babel-result-cond result-params
 	   (with-temp-buffer
@@ -224,13 +227,16 @@ This function is called by `org-babel-execute-src-block'."
   (let* ((session-name (cdr (assq :session params)))
          (session (org-babel-julia-initiate-session session-name params))
          (graphics-file (org-babel-julia-graphical-output-file params))
+         (column-names-p (unless graphics-file (cdr (assq :colnames params))))
+	 (row-names-p (unless graphics-file (cdr (assq :rownames params))))
          (expanded-body (org-babel-expand-body:julia body params graphics-file))
          (result-params (cdr (assq :result-params params)))
 	 (result-type (cdr (assq :result-type params)))
          (result (org-babel-julia-evaluate
                   session expanded-body result-type result-params
-                  ;; TODO: handle correctly the following two args
-                  nil nil)))
+                  ;; TODO: handle correctly the following two args for tables
+                  (if column-names-p "true" "false")
+                  nil)))
     ;; Return "textual" results, unless they have been written
     ;; in a graphical output file:
     (unless graphics-file
@@ -246,7 +252,7 @@ RESULT should have been computed upstream (and is typiclly retrieved
 from a temp file).
 Insert hline if column names in output have been requested
 with COLUMN-NAMES-P.  Otherwise RESULT is unchanged."
-  (if column-names-p
+  (if (equal column-names-p "true")
       (cons (car result) (cons 'hline (cdr result)))
     result))
 

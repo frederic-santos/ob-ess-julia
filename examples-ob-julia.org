@@ -72,10 +72,32 @@ t
 | great |
 
 *** IN-PROGRESS DataFrames
-A basic ~value~ display is possible. However, column names and row names are not well supported yet.
+A basic ~value~ display is possible. By default, ~ob-julia~ considers that the DataFrame has no header; but a header can be added by specifying =:colnames yes= in the block header.
 
-#+begin_src julia :results value :exports both
+- An example without header:
+  #+begin_src julia :results value :exports both
 using DataFrames
+# An example without column names:
+dtf = DataFrame(                 
+ [8.04   9.14  7.46   6.58;    
+  6.95   8.14  6.77   5.76;   
+  7.58   8.74  12.74  7.71;   
+  8.81   8.77  7.11   8.84;   
+  8.33   9.26  7.81   8.47])
+dtf
+  #+end_src
+
+  #+RESULTS:
+  | 8.04 | 9.14 |  7.46 | 6.58 |
+  | 6.95 | 8.14 |  6.77 | 5.76 |
+  | 7.58 | 8.74 | 12.74 | 7.71 |
+  | 8.81 | 8.77 |  7.11 | 8.84 |
+  | 8.33 | 9.26 |  7.81 | 8.47 |
+
+- An example with a header:
+  #+begin_src julia :results value :exports both :colnames yes
+using DataFrames
+# An example with column names:
 dtf = DataFrame(                 
  [8.04   9.14  7.46   6.58;    
   6.95   8.14  6.77   5.76;   
@@ -84,15 +106,16 @@ dtf = DataFrame(
   8.33   9.26  7.81   8.47])
 rename!(dtf, [:a, :b, :c, :d])
 dtf
-#+end_src
+  #+end_src
 
-#+RESULTS:
-|    a |    b |     c |    d |
-| 8.04 | 9.14 |  7.46 | 6.58 |
-| 6.95 | 8.14 |  6.77 | 5.76 |
-| 7.58 | 8.74 | 12.74 | 7.71 |
-| 8.81 | 8.77 |  7.11 | 8.84 |
-| 8.33 | 9.26 |  7.81 | 8.47 |
+  #+RESULTS:
+  |    a |    b |     c |    d |
+  |------+------+-------+------|
+  | 8.04 | 9.14 |  7.46 | 6.58 |
+  | 6.95 | 8.14 |  6.77 | 5.76 |
+  | 7.58 | 8.74 | 12.74 | 7.71 |
+  | 8.81 | 8.77 |  7.11 | 8.84 |
+  | 8.33 | 9.26 |  7.81 | 8.47 |
 
 ** IN-PROGRESS Inline graphical outputs with ~:results output graphics file~
 Graphical outputs are supported, at least when they are exported with png or pdf extensions. ~ob-julia~ simply adds a =savefig()= Julia instruction after your code block, so that the plot is saved in the file specified with the ~:file~ keyword.
