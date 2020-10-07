@@ -158,12 +158,20 @@ of BODY and of all those instructions."
 	     "\n"))
 
 (defconst org-babel-julia-write-object-command
-  "writedlm(\"%s\", %s)"
+  "filename = \"%s\"
+bodycode = %s
+try
+    CSV.write(filename, bodycode, delim = \"\\t\")
+catch err
+    if isa(err, ArgumentError) | isa(err, MethodError)
+        writedlm(filename, bodycode)
+    end
+end"
   "A template for Julia to evaluate a block of code and write the result to a file.
 
 Has two %s escapes to be filled in:
-1. The code to be run (must be an expression, not a statement)
-2. The name of the file to write to")
+1. The name of the file to write to
+2. The code to be run (must be an expression, not a statement)")
 
 (defun org-babel-julia-evaluate-external-process
     (body result-type result-params column-names-p row-names-p)
