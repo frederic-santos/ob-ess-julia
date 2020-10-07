@@ -1,7 +1,7 @@
 #+TITLE: Examples of code blocks with ob-julia
 #+AUTHOR: Frédéric Santos
 #+OPTIONS: todo:t
-#+STARTUP: noindent
+#+STARTUP: noindent num
 
 It is better to read this document within Emacs, or to read the raw Org format on Github, so that the header arguments of code blocks can be accessible.
 
@@ -96,9 +96,12 @@ dtf
 ** IN-PROGRESS Inline graphical outputs with ~:results output graphics file~
 Graphical outputs are supported, at least when they are exported with png or pdf extensions. ~ob-julia~ simply adds a =savefig()= Julia instruction after your code block, so that the plot is saved in the file specified with the ~:file~ keyword.
 
-For a convenient inline display of Julia plots, please indicate the three result keywords ~:results output graphics file~ in the header of your code block. Some examples are shown below.
+*** Notes
+- For a convenient inline display of Julia plots, please indicate the three result keywords ~:results output graphics file~ in the header of your code block. Some examples are shown below.
+- In accordance with default Julia arguments, default width for graphical output is 600 px, and default height is 400 px. Custom values may be specified using the usual header keywords =:width= and =:height=.
 
-#+begin_src julia :results output graphics file :file example_plots/Plots_scatterplot.png :exports both
+*** Gallery of examples
+#+begin_src julia :results output graphics file :file example_plots/Plots_scatterplot.png :exports both :height 500 :width 500
 using Plots
 scatter(rand(100), markersize = 6, c = :orange)
 #+end_src

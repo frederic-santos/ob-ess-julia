@@ -61,7 +61,9 @@ START-ARGS is passed to `run-ess-julia'."
 ;; Header args supported for Julia
 ;; (see `org-babel-insert-result'):
 (defconst org-babel-header-args:julia
-  '((results . ((file list scalar table vector verbatim)
+  '((width   . :any)
+    (height  . :any)
+    (results . ((file list scalar table vector verbatim)
 		(raw html latex)
 		(replace append none prepend silent)
 		(output graphics value))))
@@ -147,17 +149,22 @@ helper function, depending on this parameter."
 I.e., add :prologue and :epilogue to BODY if required, as well as new Julia
 variables declared from :var.  The 'expanded body' is actually the union set
 of BODY and of all those instructions."
-  (mapconcat 'identity
-	     (append
-	      (when (cdr (assq :prologue params))
-		(list (cdr (assq :prologue params))))
-	      ;; TODO: (org-babel-variable-assignments:julia params)
-	      (list body)
-              (when graphics-file
-                (list (format "savefig(\"%s\")" graphics-file)))
-	      (when (cdr (assq :epilogue params))
-		(list (cdr (assq :epilogue params)))))
-	     "\n"))
+  (let ((width (or (cdr (assq :width params))
+                   600))
+        (height (or (cdr (assq :height params))
+                    400)))
+    (mapconcat 'identity
+	       (append
+	        (when (cdr (assq :prologue params))
+		  (list (cdr (assq :prologue params))))
+	        ;; TODO: (org-babel-variable-assignments:julia params)
+	        (list body)
+                (when graphics-file
+                  (list (format "plot!(size = (%s, %s))" width height)
+                        (format "savefig(\"%s\")" graphics-file)))
+	        (when (cdr (assq :epilogue params))
+		  (list (cdr (assq :epilogue params)))))
+	       "\n")))
 
 (defconst org-babel-julia-write-object-command
   "filename = \"%s\"
