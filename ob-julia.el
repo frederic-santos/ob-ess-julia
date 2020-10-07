@@ -47,7 +47,7 @@ START-ARGS is passed to `run-ess-julia'."
   (interactive "P")
   (set-buffer (julia start-args)))
 
-(defconst org-babel-julia-eoe-indicator "print(\"org_babel_julia_eoe\")")
+(defconst org-babel-julia-eoe-indicator "\"org_babel_julia_eoe\"")
 (defconst org-babel-julia-eoe-output "org_babel_julia_eoe")
 
 (defvar ob-julia-startup
@@ -263,7 +263,28 @@ last statement in BODY, as elisp."
     (value
      (message "You want to use session %s but this does not work yet :-)" session))
     (output
-     (message "You want to use session %s but this does not work yet :-)" session))))
+     (mapconcat
+      'org-babel-chomp
+      (butlast
+       (delq nil
+             (mapcar
+              (lambda (line) (when (> (length line) 0) line))
+              (mapcar
+               ;; function to cleanup extra prompts left in eval output:
+	       (lambda (line)
+		 (if (string-match
+		      "^\\([>+.]\\([ ][>.+]\\)*[ ]\\)"
+		      (car (split-string line "\n")))
+		     (substring line (match-end 1))
+		   line))
+               ;; result of evaluation of block in the iESS Julia buffer:
+               (org-babel-comint-with-output 
+                   (session org-babel-julia-eoe-output)
+		 (insert (mapconcat 'org-babel-chomp
+				    (list body org-babel-julia-eoe-indicator)
+				    "\n"))
+		 (inferior-ess-send-input))))))
+      "\n"))))
 
 (defun org-babel-execute:julia (body params)
   "Execute a block of Julia code.
