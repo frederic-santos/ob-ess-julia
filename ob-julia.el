@@ -130,14 +130,24 @@ current code buffer."
             var-lines))
     session))
 
-(defun org-babel-load-session:julia (session body params)
-  "Load BODY into a given Julia SESSION."
-  (save-window-excursion
-    (let ((buffer (org-babel-prep-session:julia session params)))
-      (with-current-buffer buffer
-        (goto-char (process-mark (get-buffer-process (current-buffer))))
-        (insert (org-babel-chomp body)))
-      buffer)))
+(defun org-babel-variable-assignments:julia (params)
+  "Parse block PARAMS to return a list of Julia statements assigning the variables in `:var'."
+  (let ((vars (org-babel--get-vars params)))
+    ;; Create Julia statements to assign each variable specified with `:var':
+    (mapcar
+     (lambda (pair)
+       (org-babel-julia-assign-elisp
+	(car pair) (cdr pair)
+	(equal "yes" (cdr (assoc :colnames params)))
+	(equal "yes" (cdr (assoc :rownames params)))))
+     (mapcar
+      (lambda (i)
+	(cons (car (nth i vars))
+	      (org-babel-reassemble-table
+	       (cdr (nth i vars))
+	       (cdr (nth i (cdr (assoc :colname-names params))))
+	       (cdr (nth i (cdr (assoc :rowname-names params)))))))
+      (number-sequence 0 (1- (length vars)))))))
 
 (defun org-babel-edit-prep:julia (info)
   "Function to edit Julia code in OrgSrc mode.
@@ -282,6 +292,15 @@ with COLUMN-NAMES-P.  Otherwise RESULT is unchanged."
 This name is extracted from user-specified PARAMS of a code block."
   (and (member "graphics" (cdr (assq :result-params params)))
        (org-babel-graphical-output-file params)))
+
+(defun org-babel-load-session:julia (session body params)
+  "Load BODY into a given Julia SESSION."
+  (save-window-excursion
+    (let ((buffer (org-babel-prep-session:julia session params)))
+      (with-current-buffer buffer
+        (goto-char (process-mark (get-buffer-process (current-buffer))))
+        (insert (org-babel-chomp body)))
+      buffer)))
 
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
