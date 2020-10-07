@@ -237,5 +237,11 @@ with COLUMN-NAMES-P.  Otherwise RESULT is unchanged."
       (cons (car result) (cons 'hline (cdr result)))
     result))
 
+(defun org-babel-julia-graphical-output-file (params)
+  "Return the name of the file to which Julia should write graphical output.
+This name is extracted from user-specified PARAMS of a code block."
+  (and (member "graphics" (cdr (assq :result-params params)))
+       (org-babel-graphical-output-file params)))
+
 (provide 'ob-julia)
 ;;; ob-julia.el ends here
