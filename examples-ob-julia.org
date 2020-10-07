@@ -6,8 +6,9 @@
 * IN-PROGRESS External evaluation
 If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process.
 
-** IN-PROGRESS With ~:results output~
-Simple (numeric or text) ~:results output~ are supported:
+** DONE With ~:results output~
+   CLOSED: [2020-10-07 mer. 10:14]
+Elementary ~:results output~ are supported:
 
 #+BEGIN_SRC julia :results output :exports both
 println("Hello world!")
@@ -23,7 +24,13 @@ print(2+3)
 #+RESULTS:
 : 5
 
-More complex outputs such as graphic files are still to be supported.
+#+begin_src julia :results output :exports both
+a = [1 2 3 4]
+#+end_src
+
+#+RESULTS:
+: 1×4 Array{Int64,2}:
+:  1  2  3  4
 
 ** IN-PROGRESS With ~:results value~
 Basic Julia types (arrays, dictionaries and tuples) are supported. DataFrames, which are a non-native data structure, have some kind of basic support, but are still to be improved. Some examples are given below.
@@ -83,6 +90,31 @@ dtf
 | 7.58 | 8.74 | 12.74 | 7.71 |
 | 8.81 | 8.77 |  7.11 | 8.84 |
 | 8.33 | 9.26 |  7.81 | 8.47 |
+
+** IN-PROGRESS Inline graphical outputs with ~:results output graphics file~
+Graphical outputs are supported, at least when they are exported with png or pdf extensions. ~ob-julia~ simply adds a =savefig()= Julia instruction after your code block, so that the plot is saved in the file specified with the ~:file~ keyword.
+
+For a convenient inline display of Julia plots, please indicate the three result keywords ~:results output graphics file~ in the header of your code block. Some examples are shown below.
+
+#+begin_src julia :results output graphics file :file example_plots/Plots_scatterplot.png :exports both
+using Plots
+scatter(rand(100), markersize = 6, c = :orange)
+#+end_src
+
+#+CAPTION: A scatterplot made with the base ~Plots~ library.
+#+RESULTS:
+[[file:example_plots/Plots_scatterplot.png]]
+
+#+begin_src julia :results output graphics file :file example_plots/StatsPlots_density.png :exports both
+using RDatasets
+using StatsPlots
+school = RDatasets.dataset("mlmRev","Hsb82");
+@df school density(:MAch, group = :Sx)
+#+end_src
+
+#+CAPTION: A density plot made with the package ~StatsPlots~.
+#+RESULTS:
+[[file:example_plots/StatsPlots_density.png]]
 
 * TODO Evaluation within a session
 Evaluation of several code blocks within a given session is not supported yet.

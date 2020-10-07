@@ -142,7 +142,7 @@ helper function, depending on this parameter."
     (org-babel-julia-evaluate-external-process
      body result-type result-params column-names-p row-names-p)))
 
-(defun org-babel-expand-body:julia (body params &optional _graphics-file)
+(defun org-babel-expand-body:julia (body params &optional graphics-file)
   "Expand BODY according to PARAMS, return the expanded body.
 I.e., add :prologue and :epilogue to BODY if required, as well as new Julia
 variables declared from :var.  The 'expanded body' is actually the union set
@@ -153,6 +153,8 @@ of BODY and of all those instructions."
 		(list (cdr (assq :prologue params))))
 	      ;; TODO: (org-babel-variable-assignments:julia params)
 	      (list body)
+              (when graphics-file
+                (list (format "savefig(\"%s\")" graphics-file)))
 	      (when (cdr (assq :epilogue params))
 		(list (cdr (assq :epilogue params)))))
 	     "\n"))
