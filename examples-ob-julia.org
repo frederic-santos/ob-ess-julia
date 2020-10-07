@@ -66,15 +66,16 @@ t
 #+end_src
 
 #+RESULTS:
-| org  |
-| mode |
-| is   |
-| bing |
+| org   |
+| mode  |
+| is    |
+| great |
 
 *** IN-PROGRESS DataFrames
 A basic ~value~ display is possible. However, column names and row names are not well supported yet.
 
 #+begin_src julia :results value :exports both
+using DataFrames
 dtf = DataFrame(                 
  [8.04   9.14  7.46   6.58;    
   6.95   8.14  6.77   5.76;   
