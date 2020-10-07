@@ -62,7 +62,7 @@ t
 | is   |
 | bing |
 
-*** IN-PROGRESS Dataframes
+*** IN-PROGRESS DataFrames
 A basic ~value~ display is possible. However, column names and row names are not well supported yet.
 
 #+begin_src julia :results value :exports both
