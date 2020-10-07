@@ -215,7 +215,7 @@ This function is called by `org-babel-execute-src-block'."
   (let* ((session-name (cdr (assq :session params)))
          (session (org-babel-julia-initiate-session session-name params))
          (graphics-file (org-babel-julia-graphical-output-file params))
-         (expanded-body (org-babel-expand-body:julia body params))
+         (expanded-body (org-babel-expand-body:julia body params graphics-file))
          (result-params (cdr (assq :result-params params)))
 	 (result-type (cdr (assq :result-type params)))
          (result (org-babel-julia-evaluate
