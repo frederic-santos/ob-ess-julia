@@ -154,14 +154,6 @@ current code buffer."
 	       (cdr (nth i (cdr (assoc :rowname-names params)))))))
       (number-sequence 0 (1- (length vars)))))))
 
-(defun org-babel-julia-associate-session (session)
-  "Associate Julia code buffer with a Julia session.
-Make SESSION be the inferior ESS process associated with the
-current code buffer."
-  (setq ess-local-process-name
-	(process-name (get-buffer-process session)))
-  (ess-make-buffer-current))
-
 (defun org-babel-edit-prep:julia (info)
   "Function to edit Julia code in OrgSrc mode.
 (I.e., for use with, and is called by, `org-edit-src-code'.)
