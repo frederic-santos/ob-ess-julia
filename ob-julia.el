@@ -209,8 +209,8 @@ of BODY and of all those instructions."
 	       "\n")))
 
 (defconst org-babel-julia-write-object-command
-  "filename = \"%s\"
-bodycode = %s
+  "bodycode = %s
+filename = \"%s\"
 has_header = %s
 try
     CSV.write(filename, bodycode, delim = \"\\t\", writeheader = has_header)
@@ -222,8 +222,8 @@ end"
   "A template for Julia to evaluate a block of code and write the result to a file.
 
 Has three %s escapes to be filled in:
-1. The name of the file to write to
-2. The code to be run (must be an expression, not a statement)
+1. The code to be run (must be an expression, not a statement)
+2. The name of the file to write to
 3. Column names, \"true\" or\"false\" (used for DataFrames only)")
 
 (defun org-babel-julia-evaluate-external-process
@@ -242,8 +242,8 @@ last statement in BODY, as elisp."
                  " "
                  (format "--load=%s" ob-julia-startup))
          (format org-babel-julia-write-object-command
-                 (org-babel-process-file-name tmp-file 'noquote)
                  (format "begin\n%s\nend" body)
+                 (org-babel-process-file-name tmp-file 'noquote)
                  column-names-p))
         (org-babel-julia-process-value-result
 	 (org-babel-result-cond result-params
@@ -261,7 +261,28 @@ string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
   (cl-case result-type
     (value
-     (message "You want to use :results value with :session %s, but this does not work yet :-)" session))
+     (with-temp-buffer
+       ;; Evaluate body in iESS[Julia]:
+       (insert (org-babel-chomp body))
+       (let ((ess-local-process-name
+	      (process-name (get-buffer-process session)))
+	     (ess-eval-visibly-p nil))
+	 (ess-eval-buffer nil)))
+     (let ((tmp-file (org-babel-temp-file "julia-")))
+       ;; Then write last returned value in a temp file:
+       (org-babel-comint-eval-invisibly-and-wait-for-file
+	session tmp-file
+	(format org-babel-julia-write-object-command
+                "ans"            ; Julia command for last Julia result
+		(org-babel-process-file-name tmp-file 'noquote)
+                column-names-p))
+       (org-babel-julia-process-value-result
+	(org-babel-result-cond result-params
+	  (with-temp-buffer
+	    (insert-file-contents tmp-file)
+	    (org-babel-chomp (buffer-string) "\n"))
+	  (org-babel-import-elisp-from-file tmp-file "\t"))
+	column-names-p)))
     (output
      (mapconcat
       'org-babel-chomp
@@ -278,7 +299,7 @@ last statement in BODY, as elisp."
 		     (substring line (match-end 1))
 		   line))
                ;; result of evaluation of block in the iESS Julia buffer:
-               (org-babel-comint-with-output 
+               (org-babel-comint-with-output
                    (session org-babel-julia-eoe-output)
 		 (insert (mapconcat 'org-babel-chomp
 				    (list body org-babel-julia-eoe-indicator)
