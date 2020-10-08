@@ -148,8 +148,7 @@ school = RDatasets.dataset("mlmRev","Hsb82");
 * IN-PROGRESS Evaluation within a session
 Evaluation of several code blocks within a given session is partly supported, in simple cases such as those illustrated below.
 
-** DONE A simple example of ~:session~ evaluation
-   CLOSED: [2020-10-07 mer. 16:24]
+** IN-PROGRESS A simple example of ~:session~ evaluation
 Consider the following commands within a given Julia session, with ~:results output~ type of display (this includes graphic outputs):
 
 #+begin_src julia :results output :session *juliasession* :exports both
@@ -202,7 +201,7 @@ root = Dict("marquise" = "orange", "eyrie" => "blue")
   #+RESULTS:
   : You want to use :results value with :session *othersession*, but this does not work yet :-)
 
-- Also, some displays are buggy and don't work yet:
+- Also, some displays are buggy and don't work yet, but this could be related to [[https://github.com/emacs-ess/ESS/issues/1053][an ESS bug]].
 
   #+begin_src julia :results output :session *juliasession* :exports both
 using DataFrames
