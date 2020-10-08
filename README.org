@@ -26,7 +26,7 @@ Other (more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good o
 
 * How to use ~ob-julia~
 ** Installation
-This package is not hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialization file:
+This package is not hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialisation file:
 
 #+begin_src emacs-lisp :results output
 (add-to-list 'load-path "/your/path/to/ob-julia/")
@@ -38,12 +38,24 @@ This package is not hosted on MELPA. Thus, simply download the whole Git repo so
 ** Demo
 Some examples of implemented features can be found in the file ~examples-ob-julia.org~.
 
-** Notes
-(This section is still to be expanded.)
-
+** Notes and tips
 - ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
 - The following Julia packages are required: ~CSV~, ~DelimitedFiles~. They are used for the ~:result value~ output type. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-julia~ (which is inelegant; I'm still searching for a better option).
+- I suggest the following settings for the Emacs initialisation file:
+  #+begin_src emacs-lisp :results output
+;; If Julia is not yet loaded into org supported languages:
+(org-babel-do-load-languages 'org-babel-load-languages
+                             (append org-babel-load-languages
+                                     '((julia . t))))
+
+;; Shortcuts for Julia code block headers:
+(add-to-list 'org-structure-template-alist
+	     '("j" . "src julia :results output :session *julia* :exports both"))
+(add-to-list 'org-structure-template-alist
+	     '("jfig" . "src julia :results output graphics file :file FILENAME.png :session *julia* :exports both"))
+(add-to-list 'org-structure-template-alist
+	     '("jtab" . "src julia :results value table :session *julia* :exports both :colnames yes"))
+  #+end_src
 
 * License
 This package is under a [[https://en.wikipedia.org/wiki/CeCILL][CeCILL 2.1 license]], which is compatible with GPL license.
-
