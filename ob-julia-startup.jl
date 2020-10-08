@@ -10,7 +10,7 @@ using CSV
 using DelimitedFiles
 
 # Perso function to write Julia objects into CSV files:
-function ob_julia_write(bodycode, filename, has_header)
+function objuliawrite(bodycode::Any, filename::Any, has_header::Any)
     try
         CSV.write(filename, bodycode, delim = "\t", writeheader = has_header)
     catch err
