@@ -8,7 +8,7 @@
 ;;   for consistency with other ob-* backends.
 
 ;; Author: Frédéric Santos
-;; Version: 2020-10-06
+;; Version: 2020-10-08
 ;; Keywords: babel, julia, literate programming, org
 ;; URL: https://gitlab.com/f-santos/ob-julia
 
@@ -38,7 +38,7 @@
 (defcustom org-babel-julia-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
-  :package-version '(ob-julia . "2020-10-06")
+  :package-version '(ob-julia . "2020-10-08")
   :version "27.1"
   :type 'string)
 
