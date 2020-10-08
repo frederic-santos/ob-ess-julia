@@ -23,6 +23,7 @@
 ;; Required packages:
 (require 'cl-lib)
 (require 'ess)
+(require 'ess-julia)
 (require 'ob)
 
 ;; External functions from ESS:
@@ -42,11 +43,12 @@
   :type 'string)
 
 (defun run-julia-and-select-buffer (&optional start-args)
-  "Run Julia and make sure that its inferior buffer will be active.
+  "Run Julia with ESS and make sure that its inferior buffer will be active.
 START-ARGS is passed to `run-ess-julia'."
   (interactive "P")
   (set-buffer (julia start-args)))
 
+;; End of eval markers for org babel:
 (defconst org-babel-julia-eoe-indicator "\"org_babel_julia_eoe\""
   "See help of `org-babel-comint-with-output'.")
 (defconst org-babel-julia-eoe-output "org_babel_julia_eoe"
@@ -57,6 +59,8 @@ START-ARGS is passed to `run-ess-julia'."
                                    (buffer-file-name)))
           "ob-julia-startup.jl")
   "File path for startup Julia script.")
+
+(defvar inferior-julia-args)
 
 ;; Defaults for Julia session and headers:
 (defvar org-babel-default-header-args:julia '())
@@ -87,12 +91,14 @@ SESSION is a string; check whether the associated buffer is a comint buffer.
 If SESSION is `none', do nothing.
 PARAMS are user-specified src block parameters."
   (unless (equal session "none")
-    (let ((session (or session          ; if user-specified
-                       org-babel-julia-default-session))
-	  (ess-ask-for-ess-directory
-	   (and (and (boundp 'ess-ask-for-ess-directory)
-                     ess-ask-for-ess-directory)
-		(not (cdr (assoc :dir params))))))
+    (let* ((session (or session          ; if user-specified
+                        org-babel-julia-default-session))
+	   (ess-ask-for-ess-directory
+	    (and (and (boundp 'ess-ask-for-ess-directory)
+                      ess-ask-for-ess-directory)
+		 (not (cdr (assoc :dir params)))))
+           (path-to-load-file (format "--load=%s" ob-julia-startup))
+           (inferior-julia-args (concat inferior-julia-args path-to-load-file)))
       (if (org-babel-comint-buffer-livep session)
 	  session                       ; session already exists
 	(save-window-excursion
