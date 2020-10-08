@@ -201,6 +201,7 @@ root_colors = Dict("marquise" => "orange", "eyrie" => "blue")
 | marquise | orange |
 | eyrie    | blue   |
 
+(Known issue: it seems that the following one needs two evaluations to be displayed.)
 #+begin_src julia :results value table :session *juliasession* :exports both :colnames yes
 using DataFrames
 # An example without column names:
