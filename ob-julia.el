@@ -337,11 +337,12 @@ This function is called by `org-babel-execute-src-block'."
 ;; Dirty helpers for what seems to be a bug with iESS[Julia] buffers.
 ;; See https://github.com/emacs-ess/ESS/issues/1053
 
-(defun ob-julia--split-into-julia-commands ()
+(defun ob-julia--split-into-julia-commands (org-babel-julia-eoe-indicator)
   "Split the whole active buffer content into a list of valid Julia commands.
 Complete commands are elements of the list; incomplete commands (i.e., commands
 that are written on several lines) are `concat'enated, and then passed as one
 single element of the list.
+Adds string ORG-BABEL-JULIA-EOE-INDICATOR at the end of all instructions.
 This workaround avoids what seems to be a bug with iESS[julia] buffers."
   (let* ((lines (split-string (buffer-substring-no-properties
                                (point-min)
@@ -361,13 +362,14 @@ This workaround avoids what seems to be a bug with iESS[julia] buffers."
         (setcar commands (concat (car commands)
                                  " "
                                  (pop cleaned-lines)))))
-    (reverse commands)))
+    (reverse (cons org-babel-julia-eoe-indicator commands))))
 
-(defun ob-julia--execute-line-by-line (session)
+(defun ob-julia--execute-line-by-line (session org-babel-julia-eoe-indicator)
   "Execute cleanly the contents of current buffer into a Julia SESSION.
+Instructions will end by an ORG-BABEL-JULIA-EOE-INDICATOR on Julia buffer.
 I.e., clean all Julia instructions, and send them one by one into the
 active iESS[julia] process."
-  (let ((lines (split-into-julia-commands))
+  (let ((lines (ob-julia--split-into-julia-commands org-babel-julia-eoe-indicator))
         (jul-proc (get-process (process-name (get-buffer-process session)))))
     (with-current-buffer session
       (mapc
