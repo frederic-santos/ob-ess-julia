@@ -34,8 +34,14 @@ Other (more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good o
 This package is not hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialisation file:
 
 #+begin_src emacs-lisp :results output
+;; Load ob-julia:
 (add-to-list 'load-path "/your/path/to/ob-julia/")
 (require 'ob-julia)
+
+;; If Julia is not yet loaded into org supported languages:
+(org-babel-do-load-languages 'org-babel-load-languages
+                             (append org-babel-load-languages
+                                     '((julia . t))))
 #+end_src
 
 ~ob-julia~ is based on [[https://github.com/emacs-ess/ESS][ESS]]. Thus, the Emacs package ~ess~ is required.
@@ -48,16 +54,14 @@ Some examples of implemented features can be found in the file ~examples-ob-juli
 - The following Julia packages are required: ~CSV~, ~DelimitedFiles~. They are used for the ~:result value~ output type. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-julia~ (which is inelegant; I'm still searching for a better option).
 - I suggest the following settings for the Emacs initialisation file:
   #+begin_src emacs-lisp :results output
-;; If Julia is not yet loaded into org supported languages:
-(org-babel-do-load-languages 'org-babel-load-languages
-                             (append org-babel-load-languages
-                                     '((julia . t))))
-
-;; Shortcuts for Julia code block headers:
+;; Shortcuts for Julia code block headers.
+;; Shortcut for "normal" session evaluation with verbatim output:
 (add-to-list 'org-structure-template-alist
 	     '("j" . "src julia :results output :session *julia* :exports both"))
+;; Shortcut for inline graphical output:
 (add-to-list 'org-structure-template-alist
 	     '("jfig" . "src julia :results output graphics file :file FILENAME.png :session *julia* :exports both"))
+;; Shortcut for well-formatted org table output:
 (add-to-list 'org-structure-template-alist
 	     '("jtab" . "src julia :results value table :session *julia* :exports both :colnames yes"))
   #+end_src
