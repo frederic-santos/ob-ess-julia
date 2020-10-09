@@ -148,7 +148,7 @@ school = RDatasets.dataset("mlmRev","Hsb82");
 Evaluation of several code blocks within a given session is partly supported, in simple cases such as those illustrated below.
 
 ** IN-PROGRESS A simple example of ~:session~ evaluation with ~:results output~
-Consider the following commands within a given Julia session, with ~:results output~ type of display (this includes graphic outputs):
+Consider the following commands within a given Julia session, with ~:results output~ type of display (this includes graphical outputs):
 
 #+begin_src julia :results output :session *juliasession* :exports both
 x = [2, 7, 8, 4]
@@ -162,14 +162,14 @@ x = [2, 7, 8, 4]
 :  4
 
 #+begin_src julia :results output :session *juliasession* :exports both
-x[1]
+x[2]
 #+end_src
 
 #+RESULTS:
-: 2
+: 7
 
 #+begin_src julia :results output :session *juliasession* :exports both
-push!(x, 1)
+push!(x, 3)
 #+end_src
 
 #+RESULTS:
@@ -178,7 +178,7 @@ push!(x, 1)
 :  7
 :  8
 :  4
-:  1
+:  3
 
 #+begin_src julia :results output graphics file :file example_plots/session_plot_line.png :session *juliasession* :exports both :width 300 :height 300
 using Plots
@@ -186,9 +186,33 @@ y = [1, 3, 2, 4, 5]
 plot(x, y)
 #+end_src
 
-#+CAPTION: A broken line created within a Julia session.
 #+RESULTS:
 [[file:example_plots/session_plot_line.png]]
+
+Some complex structures can also be displayed as verbatim outputs:
+#+begin_src julia :results output :session *juliasession* :exports both
+using DataFrames
+dtf = DataFrame(
+    [8.04   9.14  7.46   6.58;
+     6.95   8.14  6.77   5.76;
+     7.58   8.74  12.74  7.71;
+     8.81   8.77  7.11   8.84;
+     8.33   9.26  7.81   8.47])
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+5×4 DataFrame
+│ Row │ x1      │ x2      │ x3      │ x4      │
+│     │ Float64 │ Float64 │ Float64 │ Float64 │
+├─────┼─────────┼─────────┼─────────┼─────────┤
+│ 1   │ 8.04    │ 9.14    │ 7.46    │ 6.58    │
+│ 2   │ 6.95    │ 8.14    │ 6.77    │ 5.76    │
+│ 3   │ 7.58    │ 8.74    │ 12.74   │ 7.71    │
+│ 4   │ 8.81    │ 8.77    │ 7.11    │ 8.84    │
+│ 5   │ 8.33    │ 9.26    │ 7.81    │ 8.47    │
+#+end_example
 
 ** IN-PROGRESS Session evaluation with ~:results value~
 The ~:results value~ type of display is also supported. Some examples below.
@@ -201,8 +225,19 @@ root_colors = Dict("marquise" => "orange", "eyrie" => "blue")
 | marquise | orange |
 | eyrie    | blue   |
 
-(Known issue: it seems that the following one needs two evaluations to be displayed.)
-#+begin_src julia :results value table :session *juliasession* :exports both :colnames yes
+#+begin_src julia :results output graphics file :file example_plots/plot_session_dtf.png :session *juliasession* :exports both
+using Plots
+scatter(dtf[:x1], dtf[:x2], markersize = 6, c = :purple)
+#+end_src
+
+#+CAPTION: A scatterplot from the previous dataframe.
+#+RESULTS:
+[[file:example_plots/plot_session_dtf.png]]
+
+** TODO Known issues
+Some session evaluations with ~:results value~ do work, but require two evaluations to be properly displayed. An example here:
+
+#+begin_src julia :results value :session *juliasession* :exports both :colnames yes
 using DataFrames
 # An example without column names:
 dtf = DataFrame(                 
@@ -223,27 +258,3 @@ dtf # please indicate the value to return at the end of the code block
 | 7.58 | 8.74 | 12.74 | 7.71 |
 | 8.81 | 8.77 |  7.11 | 8.84 |
 | 8.33 | 9.26 |  7.81 | 8.47 |
-
-#+begin_src julia :results output graphics file :file example_plots/plot_session_dtf.png :session *juliasession* :exports both
-using Plots
-scatter(dtf[:x1], dtf[:x2], markersize = 6, c = :purple)
-#+end_src
-
-#+CAPTION: A scatterplot from the previous dataframe.
-#+RESULTS:
-[[file:example_plots/plot_session_dtf.png]]
-
-** TODO Known issues
-- Some displays with ~:results output~ are buggy, but this could be related to [[https://github.com/emacs-ess/ESS/issues/1053][an ESS bug]].
-
-  Don't try this :-)
-
-  #+begin_src julia :results output :session *juliasession* :exports both
-using DataFrames
-dtf = DataFrame(
-    [8.04   9.14  7.46   6.58;
-     6.95   8.14  6.77   5.76;
-     7.58   8.74  12.74  7.71;
-     8.81   8.77  7.11   8.84;
-     8.33   9.26  7.81   8.47])
-  #+end_src

@@ -4,13 +4,14 @@
 * Introduction
 Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a-new-ob-julia/46308/9][my proposition on Julia discourse forum]], this repo intends to offer a lightweight support for Julia language into Org mode. *This is still an incomplete implementation to date.*
 
-** Implemented features and TODOs [42%]
+** Implemented features and TODOs [50%]
    - [X] External evaluation with verbatim output (~:results output~)
    - [X] External evaluation with formatted output (~:results value~), for standard Julia data structures and DataFrames
    - [X] Session evaluation (using inferior ESS processes) with ~:session~ header argument
    - [X] Inline graphical outputs
    - [X] Ability to indicate ~:width~ and ~:height~ of graphical outputs in pixels
    - [X] Displaying output as org tables, with or without headers
+   - [X] Get rid of annoying bug for ~:results output~ for session evaluation of multiline commands (possibly related to [[https://github.com/emacs-ess/ESS/issues/1053][a bug from ESS]]). A very inelegant workaround has been found.
    - [ ] Handling variables passed with ~:var~ header argument
    - [ ] Handling ~:dir~ header argument for working directory
    - [ ] Better error management
@@ -19,7 +20,6 @@ Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a
 (setq org-src-lang-modes
       (append org-src-lang-modes '(("julia" . ess-julia))))
          #+end_src
-   - [ ] Get rid of annoying bug for ~:results output~ for session evaluation of multiline commands (possibly related to a bug from ESS)
    - [ ] Improve documentation
    - [ ] Implement some simple unit tests
    - [ ] (Maybe, one day,) host this package on MELPA if it reaches a sufficient quality

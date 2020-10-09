@@ -290,21 +290,10 @@ last statement in BODY, as elisp."
        (delq nil
              (mapcar
               (lambda (line) (when (> (length line) 0) line))
-              (mapcar
-               ;; function to cleanup extra prompts left in eval output:
-	       (lambda (line)
-		 (if (string-match
-		      "^\\([>+.]\\([ ][>.+]\\)*[ ]\\)"
-		      (car (split-string line "\n")))
-		     (substring line (match-end 1))
-		   line))
-               ;; result of evaluation of block in the iESS Julia buffer:
-               (org-babel-comint-with-output
-                   (session org-babel-julia-eoe-output)
-		 (insert (mapconcat 'org-babel-chomp
-				    (list body org-babel-julia-eoe-indicator)
-				    "\n"))
-		 (inferior-ess-send-input))))))
+              (org-babel-comint-with-output
+                  (session org-babel-julia-eoe-indicator)
+                (ob-julia--execute-line-by-line body
+                                                org-babel-julia-eoe-indicator)))))
       "\n"))))
 
 (defun org-babel-execute:julia (body params)
@@ -337,16 +326,14 @@ This function is called by `org-babel-execute-src-block'."
 ;; Dirty helpers for what seems to be a bug with iESS[Julia] buffers.
 ;; See https://github.com/emacs-ess/ESS/issues/1053
 
-(defun ob-julia--split-into-julia-commands (org-babel-julia-eoe-indicator)
-  "Split the whole active buffer content into a list of valid Julia commands.
+(defun ob-julia--split-into-julia-commands (body org-babel-julia-eoe-indicator)
+  "Split BODY into a list of valid Julia commands.
 Complete commands are elements of the list; incomplete commands (i.e., commands
 that are written on several lines) are `concat'enated, and then passed as one
 single element of the list.
 Adds string ORG-BABEL-JULIA-EOE-INDICATOR at the end of all instructions.
 This workaround avoids what seems to be a bug with iESS[julia] buffers."
-  (let* ((lines (split-string (buffer-substring-no-properties
-                               (point-min)
-                               (point-max))
+  (let* ((lines (split-string body
                               "\n" t))
          (cleaned-lines (mapcar 'org-babel-chomp lines))
          (last-end-char nil)
@@ -364,21 +351,20 @@ This workaround avoids what seems to be a bug with iESS[julia] buffers."
                                  (pop cleaned-lines)))))
     (reverse (cons org-babel-julia-eoe-indicator commands))))
 
-(defun ob-julia--execute-line-by-line (session org-babel-julia-eoe-indicator)
-  "Execute cleanly the contents of current buffer into a Julia SESSION.
-Instructions will end by an ORG-BABEL-JULIA-EOE-INDICATOR on Julia buffer.
+(defun ob-julia--execute-line-by-line (body org-babel-julia-eoe-indicator)
+  "Execute cleaned BODY into a Julia session.
 I.e., clean all Julia instructions, and send them one by one into the
-active iESS[julia] process."
-  (let ((lines (ob-julia--split-into-julia-commands org-babel-julia-eoe-indicator))
-        (jul-proc (get-process (process-name (get-buffer-process session)))))
-    (with-current-buffer session
-      (mapc
-       (lambda (line)
-         (insert line)
-         (inferior-ess-send-input)
-         (ess-wait-for-process jul-proc nil 0.2)
-         (goto-char (point-max)))
-       lines))))
+active iESS[julia] process.
+Instructions will end by an ORG-BABEL-JULIA-EOE-INDICATOR on Julia buffer."
+  (let ((lines (ob-julia--split-into-julia-commands body org-babel-julia-eoe-indicator))
+        (jul-proc (get-process (process-name (get-buffer-process (current-buffer))))))
+    (mapc
+     (lambda (line)
+       (insert line)
+       (inferior-ess-send-input)
+       (ess-wait-for-process jul-proc nil 0.2)
+       (goto-char (point-max)))
+     lines)))
 
 (defun org-babel-julia-process-value-result (result column-names-p)
   "Julia-specific processing for `:results value' output type.
