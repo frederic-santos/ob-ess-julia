@@ -334,6 +334,50 @@ This function is called by `org-babel-execute-src-block'."
 ;; Various helpers ;;
 ;;;;;;;;;;;;;;;;;;;;;
 
+;; Dirty helpers for what seems to be a bug with iESS[Julia] buffers.
+;; See https://github.com/emacs-ess/ESS/issues/1053
+
+(defun ob-julia--split-into-julia-commands ()
+  "Split the whole active buffer content into a list of valid Julia commands.
+Complete commands are elements of the list; incomplete commands (i.e., commands
+that are written on several lines) are `concat'enated, and then passed as one
+single element of the list.
+This workaround avoids what seems to be a bug with iESS[julia] buffers."
+  (let* ((lines (split-string (buffer-substring-no-properties
+                               (point-min)
+                               (point-max))
+                              "\n" t))
+         (cleaned-lines (mapcar 'org-babel-chomp lines))
+         (last-end-char nil)
+         (commands nil))
+    (while cleaned-lines
+      (if (or (not last-end-char)
+              ;; matches an incomplete Julia command:
+              (not (s-matches? "[(;,]" last-end-char)))
+          (progn
+            (setq last-end-char (substring (car cleaned-lines) -1))
+            (setq commands (cons (pop cleaned-lines) commands)))
+        (setq last-end-char (substring (car cleaned-lines) -1))
+        (setcar commands (concat (car commands)
+                                 " "
+                                 (pop cleaned-lines)))))
+    (reverse commands)))
+
+(defun ob-julia--execute-line-by-line (session)
+  "Execute cleanly the contents of current buffer into a Julia SESSION.
+I.e., clean all Julia instructions, and send them one by one into the
+active iESS[julia] process."
+  (let ((lines (split-into-julia-commands))
+        (jul-proc (get-process (process-name (get-buffer-process session)))))
+    (with-current-buffer session
+      (mapc
+       (lambda (line)
+         (insert line)
+         (inferior-ess-send-input)
+         (ess-wait-for-process jul-proc nil 0.2)
+         (goto-char (point-max)))
+       lines))))
+
 (defun org-babel-julia-process-value-result (result column-names-p)
   "Julia-specific processing for `:results value' output type.
 RESULT should have been computed upstream (and is typiclly retrieved
