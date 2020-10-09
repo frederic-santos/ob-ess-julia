@@ -6,13 +6,13 @@ Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a
 
 ** Implemented features and TODOs [46%]
    - [X] External evaluation with verbatim output (~:results output~)
-   - [X] External evaluation with formatted output (~:results value~), for standard Julia data structures and DataFrames
+   - [X] External evaluation with well-formatted output (~:results value~), for standard Julia data structures and DataFrames
    - [X] Session evaluation (using inferior ESS processes) with ~:session~ header argument
    - [X] Inline graphical outputs
    - [X] Ability to indicate ~:width~ and ~:height~ of graphical outputs in pixels
-   - [X] Displaying output as org tables, with or without headers
+   - [X] Displaying output as org tables with ~:results value~ in session evaluation, with or without headers
    - [X] Get rid of annoying bug for ~:results output~ for session evaluation of multiline commands (possibly related to [[https://github.com/emacs-ess/ESS/issues/1053][a bug from ESS]]). A very inelegant workaround has been found.
-   - [ ] Allow for more Julia types to be displayed with ~:results value~ (only arrays, dataframes, dictionaries and tuples are supported to date; other types might work as well bu have not be tested yet)
+   - [ ] Allow for more Julia types to be displayed with ~:results value~ (only arrays, dataframes, dictionaries and tuples are supported to date; other types might work as well but have not be tested yet)
    - [ ] Handling variables passed with ~:var~ header argument
    - [ ] Handling ~:dir~ header argument for working directory
    - [ ] Better error management
