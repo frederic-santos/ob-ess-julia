@@ -396,12 +396,13 @@ Has three %s escapes to be filled in:
 3. Column names, \"true\" or\"false\" (used for DataFrames only)")
 #+end_src
 
-** IN-PROGRESS Évaluer un bloc de façon externe (session none) [4/5]
+** IN-PROGRESS Évaluer un bloc de façon externe (session none) [4/6]
    - [X] Gérer le type ~output~
    - [X] Gérer le type ~value~
    - [X] Gérer les graphiques
    - [X] Gérer le colnames des tables
    - [ ] Gérer le rownames des tables (y en a-t-il besoin ?)
+   - [ ] *Important* : à la fin, effacer le fichier temporaire
 
 Ici, il n'y a rien de spécial à faire si on veut simplement une
 ~output~. En revanche, si on veut une ~value~ :
