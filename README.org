@@ -43,8 +43,10 @@ This package is not hosted on MELPA. Thus, simply download the whole Git repo so
 
 #+begin_src emacs-lisp :results output
 ;; Load ob-julia:
-(add-to-list 'load-path "/your/path/to/ob-ess-julia/")
+(add-to-list 'load-path "/your/path/to/ob-ess-julia/") ; replace by your own path
 (require 'ob-ess-julia)
+(setq org-src-lang-modes
+      (append org-src-lang-modes '(("ess-julia" . ess-julia))))
 
 ;; If Julia is not yet loaded into org supported languages:
 (org-babel-do-load-languages 'org-babel-load-languages
@@ -72,6 +74,24 @@ Some examples of implemented features can be found in the file ~examples-ob-ess-
 ;; Shortcut for well-formatted org table output within a session:
 (add-to-list 'org-structure-template-alist
 	     '("jtab" . "src ess-julia :results value table :session *julia* :exports both :colnames yes"))
+  #+end_src
+- ~ob-ess-julia~ works better with [[https://github.com/polymode/poly-org][polymode]] and [[http://company-mode.github.io/][company]]:
+  #+begin_src emacs-lisp :results output
+;; Add polymode:
+(use-package poly-org
+  :ensure t)
+;; Add company:
+(use-package company
+  :ensure t)
+;; Tweaks for company:
+(add-hook 'after-init-hook 'global-company-mode)
+(setq company-global-modes '(not org-mode text-mode))
+(setq ess-use-company 'script-only)
+;; Add company quickhelp:
+(use-package company-quickhelp
+  :ensure t
+  :config
+  (company-quickhelp-mode))
   #+end_src
 
 * License
