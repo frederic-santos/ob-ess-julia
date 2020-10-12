@@ -97,10 +97,11 @@ PARAMS are user-specified src block parameters."
   (unless (equal session "none")
     (let* ((session (or session          ; if user-specified
                         org-babel-ess-julia-default-session))
+           (dir (cdr (assoc :dir params)))
 	   (ess-ask-for-ess-directory
 	    (and (and (boundp 'ess-ask-for-ess-directory)
                       ess-ask-for-ess-directory)
-		 (not (cdr (assoc :dir params)))))
+		 (not dir)))
            (path-to-load-file (format "--load=%s" ob-ess-julia-startup))
            (inferior-julia-args
             (concat inferior-julia-args path-to-load-file)))
@@ -111,6 +112,8 @@ PARAMS are user-specified src block parameters."
 	    ;; Session buffer exists, but with dead process
 	    (set-buffer session))
 	  (run-julia-and-select-buffer) ; create new Julia comint buffer
+          (when dir
+            (ess-eval-linewise (format "cd(\"%s\")" dir)))
 	  (rename-buffer
 	   (if (bufferp session)
 	       (buffer-name session)

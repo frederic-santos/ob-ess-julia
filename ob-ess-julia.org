@@ -161,10 +161,11 @@ On donne juste l'extension par défaut pour tangler les blocs de code Julia.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #+end_src
 
-** DONE Créer une nouvelle session si besoin [1/1]
-   CLOSED: [2020-10-12 lun. 07:48]
+** IN-PROGRESS Créer une nouvelle session si besoin [1/2]
  - [X] S'assurer que le script d'initialisation est bien lu au
    démarrage du process Julia
+ - [ ] Il y a un problème à régler avec ~:dir~, qui semble faire
+   reconnaître par défaut le bloc de code comme du R.
 #+begin_src emacs-lisp :results output
 (defun org-babel-ess-julia-initiate-session (session params)
   "Create a Julia process if there is no active SESSION yet.
@@ -190,9 +191,7 @@ PARAMS are user-specified src block parameters."
 	    (set-buffer session))
 	  (run-julia-and-select-buffer) ; create new Julia comint buffer
           (when dir
-            (ess-eval-linewise
-             (format "cd(\"%s\")"
-            )
+            (ess-eval-linewise (format "cd(\"%s\")" dir)))
 	  (rename-buffer
 	   (if (bufferp session)
 	       (buffer-name session)
