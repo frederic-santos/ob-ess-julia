@@ -57,12 +57,14 @@ START-ARGS is passed to `run-ess-julia'."
 (defconst org-babel-ess-julia-eoe-output "org_babel_ess_julia_eoe"
   "See help of `org-babel-comint-with-output'.")
 
+;; ob-ess-julia needs Julia to load a startup script:
 (defvar ob-ess-julia-startup
   (concat (file-name-directory (or load-file-name
                                    (buffer-file-name)))
           "ob-ess-julia-startup.jl")
   "File path for startup Julia script.")
 
+;; Retrieve this variable defined by ESS:
 (defvar inferior-julia-args)
 
 ;; Defaults for Julia session and headers:
@@ -70,11 +72,10 @@ START-ARGS is passed to `run-ess-julia'."
 (defvar org-babel-ess-julia-default-session "*ess-julia*"
   "Default name given to a fresh new Julia session.")
 
-;; Header args supported for Julia
-;; (see `org-babel-insert-result'):
 (defconst org-babel-header-args:ess-julia
   '((width   . :any)
     (height  . :any)
+    (dir     . :any)
     (results . ((file list scalar table vector verbatim)
 		(raw html latex)
 		(replace append none prepend silent)
@@ -101,7 +102,8 @@ PARAMS are user-specified src block parameters."
                       ess-ask-for-ess-directory)
 		 (not (cdr (assoc :dir params)))))
            (path-to-load-file (format "--load=%s" ob-ess-julia-startup))
-           (inferior-julia-args (concat inferior-julia-args path-to-load-file)))
+           (inferior-julia-args
+            (concat inferior-julia-args path-to-load-file)))
       (if (org-babel-comint-buffer-livep session)
 	  session                       ; session already exists
 	(save-window-excursion
@@ -132,6 +134,7 @@ current code buffer."
 (defvar ess-ask-for-ess-directory)      ; dynamically scoped
 (defvar ess-eval-visibly-p)
 
+;; Session helpers:
 (defun org-babel-prep-session:ess-julia (session params)
   "Prepare SESSION according to the header arguments specified in PARAMS."
   (let* ((session (org-babel-ess-julia-initiate-session session params))
@@ -212,7 +215,7 @@ of BODY and of all those instructions."
 	       "\n")))
 
 (defconst org-babel-ess-julia-write-object-command
-  "ob_julia_write(%s, \"%s\", %s);"
+  "ob_ess_julia_write(%s, \"%s\", %s);"
   "A template for Julia to evaluate a block of code and write the result to a file.
 Has three %s escapes to be filled in:
 1. The code to be run (must be an expression, not a statement)
@@ -259,7 +262,7 @@ last statement in BODY, as elisp."
        (org-babel-comint-eval-invisibly-and-wait-for-file
 	session tmp-file2
         (org-babel-chomp
-         (format "@pipe begin\n%s\nend |> ob_julia_write(_, \"%s\", %s)\nwritedlm(\"%s\", [1 2 3 4])"
+         (format "@pipe begin\n%s\nend |> ob_ess_julia_write(_, \"%s\", %s)\nwritedlm(\"%s\", [1 2 3 4])"
                  body
                  (org-babel-process-file-name tmp-file 'noquote)
                  column-names-p
@@ -280,8 +283,9 @@ last statement in BODY, as elisp."
               (lambda (line) (when (> (length line) 0) line))
               (org-babel-comint-with-output
                   (session org-babel-ess-julia-eoe-indicator)
-                (ob-ess-julia--execute-line-by-line body
-                                                org-babel-ess-julia-eoe-indicator)))))
+                (ob-ess-julia--execute-line-by-line
+                 body
+                 org-babel-ess-julia-eoe-indicator)))))
       "\n"))))
 
 (defun org-babel-execute:ess-julia (body params)

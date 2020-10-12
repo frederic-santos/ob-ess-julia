@@ -6,7 +6,7 @@
 It is better to read this document within Emacs, or to read the raw Org format on Github, so that the header arguments of code blocks can be accessible.
 
 * IN-PROGRESS External evaluation
-If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process.
+If ~:session~ is not specified (or equal to ~none~), then the code block is evaluated through an external process. Note that in this case, since there is no ESS session associated to the src block, there is no auto-completion nor other advanced ESS features.
 
 ** DONE With ~:results output~
    CLOSED: [2020-10-07 mer. 10:14]
@@ -152,7 +152,7 @@ If a ~:session~ argument is given by the user in the header of a code block, thi
 Consider the following commands within a given Julia session, with ~:results output~ type of display (this includes graphical outputs):
 
 #+begin_src ess-julia :results output :session *juliasession* :exports both
-x = [2, 7, 8, 4]
+x = [2, 7, 8, 3]
 #+end_src
 
 #+RESULTS:
@@ -160,7 +160,7 @@ x = [2, 7, 8, 4]
 :  2
 :  7
 :  8
-:  4
+:  3
 
 #+begin_src ess-julia :results output :session *juliasession* :exports both
 x[2]
@@ -170,7 +170,7 @@ x[2]
 : 7
 
 #+begin_src ess-julia :results output :session *juliasession* :exports both
-push!(x, 1)
+push!(x, 3)
 #+end_src
 
 #+RESULTS:
@@ -178,8 +178,8 @@ push!(x, 1)
 :  2
 :  7
 :  8
-:  4
-:  1
+:  3
+:  3
 
 #+begin_src ess-julia :results output graphics file :file example_plots/session_plot_line.png :session *juliasession* :exports both :width 300 :height 300
 using Plots
@@ -257,11 +257,10 @@ dtf2 # please indicate the value to return at the end of the code block
 | 2 | 3 | 4 | 1 |
 | 3 | 4 | 1 | 2 |
 
-** DONE Specifying a session directory with ~:dir~
-   CLOSED: [2020-10-12 lun. 07:59]
+** IN-PROGRESS Specifying a session directory with ~:dir~
 By default, if no directory is specified by the user, ESS will ask for the working directory of the newly created session. However, this directory can be directly given as a ~:dir~ argument. The code block below will run a Julia session in ~/home/fsantos/Documents/~:
 
-#+begin_src ess-julia :results output :session *newsession* :exports both :dir /home/fsantos/Documents
+#+begin_src ess-julia :results output :session *newsession* :exports both :dir /home/fsantos/Documents/
 a = [7 8 9 10]
 #+end_src
 
