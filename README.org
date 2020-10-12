@@ -1,8 +1,8 @@
-#+TITLE: ob-julia, a lightweight Julia support for Org mode
+#+TITLE: ob-ess-julia, a lightweight Julia support for Org mode using ESS
 #+AUTHOR: Frédéric Santos
 
 * Introduction
-Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a-new-ob-julia/46308/9][my proposition on Julia discourse forum]], this repo intends to offer a lightweight support for Julia language into Org mode. *This is still an incomplete implementation to date*, roughly in an alpha stage.
+Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a-new-ob-julia/46308/9][my proposition on Julia discourse forum]], this repo intends to offer a lightweight support for Julia language into Org mode. *This is still an incomplete implementation to date*, in an alpha stage.
 
 ** Implemented features and TODOs [53%]
    - [X] External evaluation with verbatim output (~:results output~)
@@ -12,28 +12,39 @@ Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a
    - [X] Ability to indicate ~:width~ and ~:height~ of graphical outputs in pixels
    - [X] Displaying output as org tables with ~:results value~ in session evaluation, with or without headers
    - [X] Get rid of annoying bug for ~:results output~ for session evaluation of multiline commands (possibly related to [[https://github.com/emacs-ess/ESS/issues/1053][a bug from ESS]]). A very inelegant workaround has been found.
-   - [X] Handling ~:dir~ header argument to set working directory of ~ess-julia~ session
+   - [X] Make ~ob-ess-julia~ compatible with polymode so that ~ess-julia-mode~ can be used as innermode in the src blocks
+   - [ ] Handling ~:dir~ header argument to set working directory of ~ess-julia~ session (works, but with a glitch)
    - [ ] Handling variables passed with ~:var~ header argument
    - [ ] Allow for more Julia types to be displayed with ~:results value~ (only arrays, dataframes, dictionaries and tuples are supported to date; other types might work as well but have not be tested yet)
    - [ ] Better error management
-   - [ ] Make ~ob-julia~ compatible with polymode so that ~ess-julia-mode~ can be used in the src blocks instead of ~julia-mode~
    - [ ] Improve documentation
    - [ ] Implement some simple unit tests
    - [ ] (Maybe, one day,) host this package on MELPA if it reaches a sufficient quality
 
+** Why ~ob-ess-julia~ instead of ~ob-julia~?
+Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][julia-repl]], [[https://github.com/gcv/julia-snail][julia-snail]], and [[https://github.com/emacs-ess/ESS][ess-julia]]. Furthermore, Julia can also be used through Jupyter using [[https://github.com/millejoh/emacs-ipython-notebook#ob-ein][ob-ein]] or [[https://github.com/nnicandro/emacs-jupyter#org-mode-source-blocks][emacs-jupyter]]. The present package is based on ESS, but it would be unfair to "preempt" the name ~ob-julia~, since it's only one solution among other ones. Also, there exists already a fork named [[https://git.nixo.xyz/nixo/ob-julia][ob-julia]], and I did not want any confusion between those two packages.
+
+As a consequence, the general form of src blocks in ~ob-ess-julia~ is:
+
+#+begin_example
+  #+begin_src ess-julia
+
+  #+end_src
+#+end_example
+
 ** Disclaimer
 My current knowledge of both Julia and Elisp is very limited. Trying to make another fork of ~ob-julia~ is primarily a way of improving my knowledge in those two languages with a meaningful project. But I cannot guarantee that it is ready for public use (yet).
 
-Other (more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good old ob-julia]] have been made available by various authors: [[https://git.nixo.xyz/nixo/ob-julia][an example here]]. Those forks offer additional options such as async evaluation, and are probably much more elegant or well-written.
+Other (more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good old ob-julia]] have been made available by various authors: [[https://git.nixo.xyz/nixo/ob-julia][an example has already been given above]]. Those forks offer additional options such as async evaluation, and are probably much more elegant or well-written.
 
-* How to use ~ob-julia~
+* How to use ~ob-ess-julia~
 ** Installation
 This package is not hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialisation file:
 
 #+begin_src emacs-lisp :results output
 ;; Load ob-julia:
-(add-to-list 'load-path "/your/path/to/ob-julia/")
-(require 'ob-julia)
+(add-to-list 'load-path "/your/path/to/ob-ess-julia/")
+(require 'ob-ess-julia)
 
 ;; If Julia is not yet loaded into org supported languages:
 (org-babel-do-load-languages 'org-babel-load-languages
@@ -41,26 +52,26 @@ This package is not hosted on MELPA. Thus, simply download the whole Git repo so
                                      '((julia . t))))
 #+end_src
 
-~ob-julia~ is based on [[https://github.com/emacs-ess/ESS][ESS]]. Thus, the Emacs package ~ess~ is required.
+~ob-ess-julia~ is based on [[https://github.com/emacs-ess/ESS][ESS]]. Thus, the Emacs package ~ess~ is required.
 
 ** Demo
-Some examples of implemented features can be found in the file ~examples-ob-julia.org~.
+Some examples of implemented features can be found in the file ~examples-ob-ess-julia.org~.
 
 ** Notes and tips
 - ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
-- The following Julia packages are required: ~CSV~, ~DelimitedFiles~. They are used for the ~:result value~ output type. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-julia~ (which is inelegant; I'm still searching for a better option).
+- The following Julia packages are required: ~CSV~, ~DelimitedFiles~, ~Pipe~. They are used for the ~:result value~ output type. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-ess-julia~ (which is inelegant; but I couldn't find a better option).
 - I suggest the following settings for the Emacs initialisation file:
   #+begin_src emacs-lisp :results output
 ;; Shortcuts for Julia code block headers.
 ;; Shortcut for "normal" session evaluation with verbatim output:
 (add-to-list 'org-structure-template-alist
-	     '("j" . "src julia :results output :session *julia* :exports both"))
-;; Shortcut for inline graphical output:
+	     '("j" . "src ess-julia :results output :session *julia* :exports both"))
+;; Shortcut for inline graphical output within a session:
 (add-to-list 'org-structure-template-alist
-	     '("jfig" . "src julia :results output graphics file :file FILENAME.png :session *julia* :exports both"))
-;; Shortcut for well-formatted org table output:
+	     '("jfig" . "src ess-julia :results output graphics file :file FILENAME.png :session *julia* :exports both"))
+;; Shortcut for well-formatted org table output within a session:
 (add-to-list 'org-structure-template-alist
-	     '("jtab" . "src julia :results value table :session *julia* :exports both :colnames yes"))
+	     '("jtab" . "src ess-julia :results value table :session *julia* :exports both :colnames yes"))
   #+end_src
 
 * License
