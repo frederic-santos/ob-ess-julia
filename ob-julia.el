@@ -209,16 +209,7 @@ of BODY and of all those instructions."
 	       "\n")))
 
 (defconst org-babel-julia-write-object-command
-  "bodycode = %s
-filename = \"%s\"
-has_header = %s
-try
-    CSV.write(filename, bodycode, delim = \"\\t\", writeheader = has_header)
-catch err
-    if isa(err, ArgumentError) | isa(err, MethodError)
-        writedlm(filename, bodycode)
-    end
-end"
+  "ob_julia_write(%s, \"%s\", %s);"
   "A template for Julia to evaluate a block of code and write the result to a file.
 
 Has three %s escapes to be filled in:
