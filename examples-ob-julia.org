@@ -145,9 +145,10 @@ school = RDatasets.dataset("mlmRev","Hsb82");
 [[file:example_plots/StatsPlots_density.png]]
 
 * IN-PROGRESS Evaluation within a session
-Evaluation of several code blocks within a given session is partly supported, in simple cases such as those illustrated below.
+If a ~:session~ argument is given by the user in the header of a code block, this code block will be evaluated within a given Julia session, using ESS. Some simple examples are given below.
 
-** IN-PROGRESS A simple example of ~:session~ evaluation with ~:results output~
+** DONE A simple example of ~:session~ evaluation with ~:results output~
+   CLOSED: [2020-10-12 lun. 07:51]
 Consider the following commands within a given Julia session, with ~:results output~ type of display (this includes graphical outputs):
 
 #+begin_src julia :results output :session *juliasession* :exports both
@@ -237,10 +238,22 @@ scatter(dtf[:x1], dtf[:x2], markersize = 6, c = :purple)
 #+RESULTS:
 [[file:example_plots/plot_session_dtf.png]]
 
-** TODO Known issues
+** DONE Specifying a session directory with ~:dir~
+   CLOSED: [2020-10-12 lun. 07:59]
+By default, if no directory is specified by the user, ESS will ask for the working directory of the newly created session. However, this directory can be directly given as a ~:dir~ argument. The code block below will run a Julia session in ~/home/fsantos/Documents/~:
+
+#+begin_src julia :results output :session *newsession* :exports both :dir /home/fsantos/Documents
+a = [7 8 9 10]
+#+end_src
+
+#+RESULTS:
+: 1×4 Array{Int64,2}:
+:  7  8  9  10
+
+* TODO Known issues
 Some session evaluations with ~:results value~ do work, but require two evaluations to be properly displayed. An example here:
 
-#+begin_src julia :results value :session *juliasession* :exports both :colnames yes
+#+begin_src julia :results value table :session *julia* :exports both :colnames yes
 using DataFrames
 # An example without column names:
 dtf = DataFrame(                 
