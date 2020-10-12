@@ -10,14 +10,15 @@ using CSV
 using DelimitedFiles
 
 # Perso function to write Julia objects into CSV files:
-function my_csv_write(filename, bodycode, has_header)
-    CSV.write(filename, bodycode, delim = "\t", writeheader = has_header)
-    nothing
+function ob_julia_csv_write(filename, bodycode, has_header)
+    last_res = ans
+    CSV.write(filename, bodycode, delim = "\t", writeheader = has_header);
+    return last_res
 end
 
-function objuliawrite(bodycode::Any, filename::Any, has_header::Any)
+function ob_julia_write(bodycode::Any, filename::Any, has_header::Any)
     try
-        my_csv_write(filename, bodycode, has_header);
+        ob_julia_csv_write(filename, bodycode, has_header);
     catch err
         if isa(err, ArgumentError) | isa(err, MethodError)
             writedlm(filename, bodycode)
