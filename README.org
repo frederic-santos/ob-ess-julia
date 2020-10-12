@@ -16,11 +16,7 @@ Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a
    - [ ] Handling variables passed with ~:var~ header argument
    - [ ] Handling ~:dir~ header argument for working directory
    - [ ] Better error management
-   - [ ] Make ~ob-julia~ compatible with polymode so that ~ess-julia-mode~ can be used in the src blocks with:
-         #+begin_src emacs-lisp :results output
-(setq org-src-lang-modes
-      (append org-src-lang-modes '(("julia" . ess-julia))))
-         #+end_src
+   - [ ] Make ~ob-julia~ compatible with polymode so that ~ess-julia-mode~ can be used in the src blocks instead of ~julia-mode~
    - [ ] Improve documentation
    - [ ] Implement some simple unit tests
    - [ ] (Maybe, one day,) host this package on MELPA if it reaches a sufficient quality
