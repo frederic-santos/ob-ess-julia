@@ -241,7 +241,7 @@ scatter(dtf[:x1], dtf[:x2], markersize = 6, c = :purple)
 DataFrames can be exported as org tables as well:
 
 #+begin_src julia :results value table :session *juliasession* :exports both :colnames yes
-using DataFrames
+using DataFrames # reload just for testing purpose, this is not needed
 dtf2 = DataFrame(          
     [1 2 3 4;    
      2 3 4 1;   
