@@ -466,21 +466,20 @@ string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
   (cl-case result-type
     (value
-     (with-temp-buffer
-       ;; Evaluate body in iESS[Julia]:
-       (insert (org-babel-chomp body))
-       (let ((ess-local-process-name
-	      (process-name (get-buffer-process session)))
-	     (ess-eval-visibly-p nil))
-	 (ess-eval-buffer nil)))
      (let ((tmp-file (org-babel-temp-file "julia-")))
-       ;; Then write last returned value in a temp file:
-       (org-babel-comint-eval-invisibly-and-wait-for-file
-	session tmp-file
-	(format org-babel-julia-write-object-command
-                "ans"            ; Julia command for last Julia result
-		(org-babel-process-file-name tmp-file 'noquote)
-                column-names-p))
+       (with-temp-buffer
+         ;; Evaluate body in iESS[Julia]:
+         (let ((ess-local-process-name
+	        (process-name (get-buffer-process session)))
+	       (ess-eval-visibly-p nil))
+           (insert (org-babel-chomp
+                    (format "@pipe begin\n%s\nend |> ob_julia_write(_, \"%s\", %s)"
+                            body
+                            (org-babel-process-file-name tmp-file 'noquote)
+                            column-names-p)))
+	   (ess-eval-buffer nil)
+           (org-babel-comint-eval-invisibly-and-wait-for-file
+	    session tmp-file "ans")))
        (org-babel-julia-process-value-result
 	(org-babel-result-cond result-params
 	  (with-temp-buffer

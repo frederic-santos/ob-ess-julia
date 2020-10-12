@@ -1,19 +1,19 @@
 # Check that required packages are installed:
-if Base.find_package("CSV") == nothing || Base.find_package("DelimitedFiles") == nothing
+if Base.find_package("CSV") == nothing || Base.find_package("DelimitedFiles") == nothing || Base.find_package("Pipe") == nothing
     using Pkg
     Pkg.add("CSV")
     Pkg.add("DelimitedFiles")
+    Pkg.add("Pipe")
 end
 
 # Load required packages:
 using CSV
 using DelimitedFiles
+using Pipe
 
 # Perso function to write Julia objects into CSV files:
 function ob_julia_csv_write(filename, bodycode, has_header)
-    last_res = ans
     CSV.write(filename, bodycode, delim = "\t", writeheader = has_header);
-    return last_res
 end
 
 function ob_julia_write(bodycode::Any, filename::Any, has_header::Any)

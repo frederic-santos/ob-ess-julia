@@ -224,10 +224,6 @@ root_colors = Dict("marquise" => "orange", "eyrie" => "blue",
 #+end_src
 
 #+RESULTS:
-| woodland alliance | green  |
-| marquise          | orange |
-| eyrie             | blue   |
-| vagabond          | gray   |
 
 #+begin_src julia :results output graphics file :file example_plots/plot_session_dtf.png :session *juliasession* :exports both
 using Plots
@@ -265,12 +261,3 @@ dtf = DataFrame(
 rename!(dtf, [:a, :b, :c, :d])
 dtf # please indicate the value to return at the end of the code block
 #+end_src
-
-#+RESULTS:
-|    a |    b |     c |    d |
-|------+------+-------+------|
-| 8.04 | 9.14 |  7.46 | 6.58 |
-| 6.95 | 8.14 |  6.77 | 5.76 |
-| 7.58 | 8.74 | 12.74 | 7.71 |
-| 8.81 | 8.77 |  7.11 | 8.84 |
-| 8.33 | 9.26 |  7.81 | 8.47 |
