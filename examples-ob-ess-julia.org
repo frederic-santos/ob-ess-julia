@@ -1,4 +1,4 @@
-#+TITLE: Examples of code blocks with ob-julia
+#+TITLE: Examples of code blocks with ob-ess-julia
 #+AUTHOR: Frédéric Santos
 #+OPTIONS: todo:t
 #+STARTUP: noindent num
@@ -12,21 +12,21 @@ If ~:session~ is not specified (or equal to ~none~), then the code block is eval
    CLOSED: [2020-10-07 mer. 10:14]
 Elementary ~:results output~ are supported:
 
-#+begin_src julia :results output :exports both
+#+begin_src ess-julia :results output :exports both
 println("Hello world!")
 #+end_src
 
 #+RESULTS:
 : Hello world!
 
-#+begin_src julia :results output :exports both :session none
+#+begin_src ess-julia :results output :exports both :session none
 print(2+3)
 #+end_src
 
 #+RESULTS:
 : 5
 
-#+begin_src julia :results output :exports both
+#+begin_src ess-julia :results output :exports both
 a = [1 2 3 4]
 #+end_src
 
@@ -39,7 +39,7 @@ Basic Julia types (arrays, dictionaries and tuples) are supported. DataFrames, w
 
 *** DONE Arrays
     CLOSED: [2020-10-06 mar. 18:32]
-#+begin_src julia :results value :exports both
+#+begin_src ess-julia :results value :exports both
 a = [1 2 3 4]
 a
 #+end_src
@@ -49,7 +49,7 @@ a
 
 *** DONE Dictionaries
     CLOSED: [2020-10-06 mar. 18:33]
-#+begin_src julia :results value :exports both
+#+begin_src ess-julia :results value :exports both
 d = Dict("Emacs" => "awesome", "Julia" => "nice")
 d
 #+end_src
@@ -60,7 +60,7 @@ d
 
 *** DONE Tuples
     CLOSED: [2020-10-06 mar. 18:35]
-#+begin_src julia :results value :exports both
+#+begin_src ess-julia :results value :exports both
 t = ("org", "mode", "is", "great")
 t
 #+end_src
@@ -75,7 +75,7 @@ t
 A basic ~value~ display is possible. By default, ~ob-julia~ considers that the DataFrame has no header; but a header can be added by specifying =:colnames yes= in the block header.
 
 - An example without header:
-  #+begin_src julia :results value :exports both
+  #+begin_src ess-julia :results value :exports both
 using DataFrames
 # An example without column names:
 dtf = DataFrame(                 
@@ -94,7 +94,7 @@ dtf = DataFrame(
   | 8.33 | 9.26 |  7.81 | 8.47 |
 
 - An example with a header:
-  #+begin_src julia :results value :exports both :colnames yes
+  #+begin_src ess-julia :results value :exports both :colnames yes
 using DataFrames
 # An example with column names:
 dtf = DataFrame(                 
@@ -124,7 +124,7 @@ Graphical outputs are supported, at least when they are exported with png or pdf
 - In accordance with default Julia arguments, default width for graphical output is 600 px, and default height is 400 px. Custom values may be specified using the usual header keywords =:width= and =:height=.
 
 *** Gallery of examples
-#+begin_src julia :results output graphics file :file example_plots/Plots_scatterplot.png :exports both :height 500 :width 500
+#+begin_src ess-julia :results output graphics file :file example_plots/Plots_scatterplot.png :exports both :height 500 :width 500
 using Plots
 scatter(rand(100), markersize = 6, c = :red)
 #+end_src
@@ -133,7 +133,7 @@ scatter(rand(100), markersize = 6, c = :red)
 #+RESULTS:
 [[file:example_plots/Plots_scatterplot.png]]
 
-#+begin_src julia :results output graphics file :file example_plots/StatsPlots_density.png :exports both
+#+begin_src ess-julia :results output graphics file :file example_plots/StatsPlots_density.png :exports both
 using RDatasets
 using StatsPlots
 school = RDatasets.dataset("mlmRev","Hsb82");
@@ -151,8 +151,8 @@ If a ~:session~ argument is given by the user in the header of a code block, thi
    CLOSED: [2020-10-12 lun. 07:51]
 Consider the following commands within a given Julia session, with ~:results output~ type of display (this includes graphical outputs):
 
-#+begin_src julia :results output :session *juliasession* :exports both
-x = [2, 7, 8, 5]
+#+begin_src ess-julia :results output :session *juliasession* :exports both
+x = [2, 7, 8, 4]
 #+end_src
 
 #+RESULTS:
@@ -160,17 +160,17 @@ x = [2, 7, 8, 5]
 :  2
 :  7
 :  8
-:  5
+:  4
 
-#+begin_src julia :results output :session *juliasession* :exports both
+#+begin_src ess-julia :results output :session *juliasession* :exports both
 x[2]
 #+end_src
 
 #+RESULTS:
 : 7
 
-#+begin_src julia :results output :session *juliasession* :exports both
-push!(x, 3)
+#+begin_src ess-julia :results output :session *juliasession* :exports both
+push!(x, 1)
 #+end_src
 
 #+RESULTS:
@@ -178,10 +178,10 @@ push!(x, 3)
 :  2
 :  7
 :  8
-:  5
-:  3
+:  4
+:  1
 
-#+begin_src julia :results output graphics file :file example_plots/session_plot_line.png :session *juliasession* :exports both :width 300 :height 300
+#+begin_src ess-julia :results output graphics file :file example_plots/session_plot_line.png :session *juliasession* :exports both :width 300 :height 300
 using Plots
 y = [1, 3, 2, 4, 5]
 plot(x, y)
@@ -191,7 +191,7 @@ plot(x, y)
 [[file:example_plots/session_plot_line.png]]
 
 There should be no limitation about the data types that can be displayed as verbatim outputs:
-#+begin_src julia :results output :session *juliasession* :exports both
+#+begin_src ess-julia :results output :session *juliasession* :exports both
 using DataFrames
 dtf = DataFrame(
     [8.04   9.14  7.46   6.58;
@@ -218,18 +218,18 @@ dtf = DataFrame(
 ** IN-PROGRESS Session evaluation with ~:results value~
 The ~:results value~ type of display is also supported, for some data types (arrays, dictionaries, tuples, dataframes). Some examples below.
 
-#+begin_src julia :results value :session *juliasession* :exports both
+#+begin_src ess-julia :results value :session *juliasession* :exports both
 root_colors = Dict("marquise" => "orange", "eyrie" => "blue",
-                   "vagabond" => "gray", "woodland alliance" => "green")
+                   "vagabond" => "darkgray", "woodland alliance" => "green")
 #+end_src
 
 #+RESULTS:
-| woodland alliance | green  |
-| marquise          | orange |
-| eyrie             | blue   |
-| vagabond          | gray   |
+| woodland alliance | green    |
+| marquise          | orange   |
+| eyrie             | blue     |
+| vagabond          | darkgray |
 
-#+begin_src julia :results output graphics file :file example_plots/plot_session_dtf.png :session *juliasession* :exports both
+#+begin_src ess-julia :results output graphics file :file example_plots/plot_session_dtf.png :session *juliasession* :exports both
 using Plots
 scatter(dtf[:x1], dtf[:x2], markersize = 6, c = :purple)
 #+end_src
@@ -240,7 +240,7 @@ scatter(dtf[:x1], dtf[:x2], markersize = 6, c = :purple)
 
 DataFrames can be exported as org tables as well:
 
-#+begin_src julia :results value table :session *juliasession* :exports both :colnames yes
+#+begin_src ess-julia :results value table :session *juliasession* :exports both :colnames yes
 using DataFrames # reload just for testing purpose, this is not needed
 dtf2 = DataFrame(          
     [1 2 3 4;    
@@ -261,7 +261,7 @@ dtf2 # please indicate the value to return at the end of the code block
    CLOSED: [2020-10-12 lun. 07:59]
 By default, if no directory is specified by the user, ESS will ask for the working directory of the newly created session. However, this directory can be directly given as a ~:dir~ argument. The code block below will run a Julia session in ~/home/fsantos/Documents/~:
 
-#+begin_src julia :results output :session *newsession* :exports both :dir /home/fsantos/Documents
+#+begin_src ess-julia :results output :session *newsession* :exports both :dir /home/fsantos/Documents
 a = [7 8 9 10]
 #+end_src
 

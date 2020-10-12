@@ -12,13 +12,13 @@ using DelimitedFiles
 using Pipe
 
 # Perso function to write Julia objects into CSV files:
-function ob_julia_csv_write(filename, bodycode, has_header)
+function ob_ess_julia_csv_write(filename, bodycode, has_header)
     CSV.write(filename, bodycode, delim = "\t", writeheader = has_header);
 end
 
-function ob_julia_write(bodycode::Any, filename::Any, has_header::Any)
+function ob_ess_julia_write(bodycode::Any, filename::Any, has_header::Any)
     try
-        ob_julia_csv_write(filename, bodycode, has_header);
+        ob_ess_julia_csv_write(filename, bodycode, has_header);
     catch err
         if isa(err, ArgumentError) | isa(err, MethodError)
             writedlm(filename, bodycode)

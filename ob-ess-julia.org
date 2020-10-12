@@ -1,13 +1,14 @@
-#+TITLE: ob-julia
+#+TITLE: ob-ess-julia
 #+SUBTITLE: Un document org pour tangler le code source
 #+AUTHOR: Frédéric Santos
-#+PROPERTY: header-args :tangle ob-julia.el
+#+PROPERTY: header-args :tangle ob-ess-julia.el
 
 * DONE Frontmatter
 CLOSED: [2020-09-28 lun. 09:46]
 L'en-tête :
 #+begin_src emacs-lisp :results output
-;;; ob-julia --- Org babel support for Julia language
+;;; ob-ess-julia --- Org babel support for Julia language,
+;;;                  based on ESS.
 
 ;; Copyright (C) 2020
 ;; Credits:
@@ -17,8 +18,8 @@ L'en-tête :
 ;;   for consistency with other ob-* backends.
 
 ;; Author: Frédéric Santos
-;; Version: 2020-10-08
-;; Keywords: babel, julia, literate programming, org
+;; Version: 2020-10-12
+;; Keywords: babel, ess, julia, literate programming, org
 ;; URL: https://gitlab.com/f-santos/ob-julia
 
 ;; This file is *not* part of GNU Emacs.
@@ -28,6 +29,7 @@ L'en-tête :
 ;; in Org mode.  It is still at a very early stage of development.
 
 ;;; Code:
+
 #+end_src
 
 * DONE Fonctions externes et packages requis
@@ -50,18 +52,20 @@ CLOSED: [2020-09-28 lun. 09:46]
 * Définition de variables et constantes globales
 ** DONE Appel à Julia
 CLOSED: [2020-09-28 lun. 09:55]
-Il s'agit ici de donner le nom de la commande permettant de lancer une
-session Julia.
+Il s'agit ici de donner le nom de la commande permettant de lancer
+Julia, à la fois pour l'évaluation externe et à travers une session.
 
 #+begin_src emacs-lisp :results output
-;; Julia will be called as an ESS process:
-(declare-function julia "ext:ess-julia" (&optional start-args))
-(defcustom org-babel-julia-command "julia"
+;; For external eval, we do not rely on ESS:
+(defcustom org-babel-ess-julia-external-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
-  :package-version '(ob-julia . "2020-10-08")
+  :package-version '(ob-julia . "2020-10-12")
   :version "27.1"
   :type 'string)
+
+;; For session eval, Julia will be called as an ESS process:
+(declare-function julia "ext:ess-julia" (&optional start-args))
 #+end_src
 
 On donne aussi une fonction permettant de lancer Julia en s'assurant
@@ -72,7 +76,7 @@ loin, dans la fonction ~org-babel-julia-initiate-session~) :
   "Run Julia with ESS and make sure that its inferior buffer will be active.
 START-ARGS is passed to `run-ess-julia'."
   (interactive "P")
-  (set-buffer (julia start-args)))
+  (set-buffer (run-ess-julia start-args)))
 #+end_src
 
 ** DONE eoe expressions
@@ -83,9 +87,9 @@ Voir l'aide de ~org-babel-comint-with-output~.
 
 #+begin_src emacs-lisp :results output
 ;; End of eval markers for org babel:
-(defconst org-babel-julia-eoe-indicator "\"org_babel_julia_eoe\""
+(defconst org-babel-ess-julia-eoe-indicator "\"org_babel_ess_julia_eoe\""
   "See help of `org-babel-comint-with-output'.")
-(defconst org-babel-julia-eoe-output "org_babel_julia_eoe"
+(defconst org-babel-ess-julia-eoe-output "org_babel_ess_julia_eoe"
   "See help of `org-babel-comint-with-output'.")
 #+end_src
 
@@ -100,15 +104,17 @@ du script de démarrage de Julia, inféré à partir du chemin de
 ~ob-julia.el~.
 
 #+begin_src emacs-lisp :results output
-(defvar ob-julia-startup
+;; ob-ess-julia needs Julia to load a startup script:
+(defvar ob-ess-julia-startup
   (concat (file-name-directory (or load-file-name
                                    (buffer-file-name)))
-          "ob-julia-startup.jl")
+          "ob-ess-julia-startup.jl")
   "File path for startup Julia script.")
 #+end_src
 
 Les arguments de départ de l'utilisateur sont récupérés :
 #+begin_src emacs-lisp :results output
+;; Retrieve this variable defined by ESS:
 (defvar inferior-julia-args)
 #+end_src
 
@@ -117,8 +123,8 @@ CLOSED: [2020-09-28 lun. 09:54]
 
 #+begin_src emacs-lisp :results output
 ;; Defaults for Julia session and headers:
-(defvar org-babel-default-header-args:julia '())
-(defvar org-babel-julia-default-session "*julia*"
+(defvar org-babel-default-header-args:ess-julia '())
+(defvar org-babel-ess-julia-default-session "*ess-julia*"
   "Default name given to a fresh new Julia session.")
 #+end_src
 
@@ -127,9 +133,7 @@ On n'en donne pour le moment qu'une toute petite partie ; il faudra
 augmenter ça au fur et à mesure du développement.
 
 #+begin_src emacs-lisp :results output
-;; Header args supported for Julia
-;; (see `org-babel-insert-result'):
-(defconst org-babel-header-args:julia
+(defconst org-babel-header-args:ess-julia
   '((width   . :any)
     (height  . :any)
     (results . ((file list scalar table vector verbatim)
@@ -145,7 +149,7 @@ On donne juste l'extension par défaut pour tangler les blocs de code Julia.
 
 #+begin_src emacs-lisp :results output
 ;; Set default extension to tangle Julia code:
-(add-to-list 'org-babel-tangle-lang-exts '("julia" . "jl"))
+(add-to-list 'org-babel-tangle-lang-exts '("ess-julia" . "jl"))
 #+end_src
 
 * Gestion des sessions Julia
@@ -161,19 +165,19 @@ On donne juste l'extension par défaut pour tangler les blocs de code Julia.
  - [X] S'assurer que le script d'initialisation est bien lu au
    démarrage du process Julia
 #+begin_src emacs-lisp :results output
-(defun org-babel-julia-initiate-session (session params)
+(defun org-babel-ess-julia-initiate-session (session params)
   "Create a Julia process if there is no active SESSION yet.
 SESSION is a string; check whether the associated buffer is a comint buffer.
 If SESSION is `none', do nothing.
 PARAMS are user-specified src block parameters."
   (unless (equal session "none")
     (let* ((session (or session          ; if user-specified
-                        org-babel-julia-default-session))
+                        org-babel-ess-julia-default-session))
 	   (ess-ask-for-ess-directory
 	    (and (and (boundp 'ess-ask-for-ess-directory)
                       ess-ask-for-ess-directory)
 		 (not (cdr (assoc :dir params)))))
-           (path-to-load-file (format "--load=%s" ob-julia-startup))
+           (path-to-load-file (format "--load=%s" ob-ess-julia-startup))
            (inferior-julia-args (concat inferior-julia-args path-to-load-file)))
       (if (org-babel-comint-buffer-livep session)
 	  session                       ; session already exists
@@ -195,7 +199,7 @@ PARAMS are user-specified src block parameters."
 CLOSED: [2020-09-28 lun. 10:41]
 #+begin_src emacs-lisp :results output
 ;; Retrieve ESS process info:
-(defun org-babel-julia-associate-session (session)
+(defun org-babel-ess-julia-associate-session (session)
   "Associate Julia code buffer with an ESS[Julia] session.
 See function `org-src-associate-babel-session'.
 Make SESSION be the inferior ESS process associated with the
@@ -218,10 +222,11 @@ l'utilisateur dans le header du bloc de code. Cela permet de démarrer
 sur la "bonne" session, et avec tout l'environnement requis.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-prep-session:julia (session params)
+;; Session helpers:
+(defun org-babel-prep-session:ess-julia (session params)
   "Prepare SESSION according to the header arguments specified in PARAMS."
-  (let* ((session (org-babel-julia-initiate-session session params))
-	 (var-lines (org-babel-variable-assignments:julia params)))
+  (let* ((session (org-babel-ess-julia-initiate-session session params))
+	 (var-lines (org-babel-variable-assignments:ess-julia params)))
     (org-babel-comint-in-buffer
         session                     ; name of buffer for Julia session
       (mapc (lambda (var)
@@ -244,13 +249,13 @@ Il s'agit de parser le header du bloc de code pour :
 - ...
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-variable-assignments:julia (params)
+(defun org-babel-variable-assignments:ess-julia (params)
   "Parse block PARAMS to return a list of Julia statements assigning the variables in `:var'."
   (let ((vars (org-babel--get-vars params)))
     ;; Create Julia statements to assign each variable specified with `:var':
     (mapcar
      (lambda (pair)
-       (org-babel-julia-assign-elisp
+       (org-babel-ess-julia-assign-elisp
 	(car pair) (cdr pair)
 	(equal "yes" (cdr (assoc :colnames params)))
 	(equal "yes" (cdr (assoc :rownames params)))))
@@ -274,7 +279,7 @@ des étoiles pour que cela fonctionne.
 Voir aussi ici : https://emacs.stackexchange.com/questions/33807/org-src-mode-send-commands-to-repl-in-named-python-session-not-python
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-edit-prep:julia (info)
+(defun org-babel-edit-prep:ess-julia (info)
   "Function to edit Julia code in OrgSrc mode.
 (I.e., for use with, and is called by, `org-edit-src-code'.)
 INFO is a list as returned by `org-babel-get-src-block-info'."
@@ -282,7 +287,7 @@ INFO is a list as returned by `org-babel-get-src-block-info'."
     (when (and session
 	       (string-prefix-p "*" session)
 	       (string-suffix-p "*" session))
-      (org-babel-julia-initiate-session session nil))))
+      (org-babel-ess-julia-initiate-session session nil))))
 #+end_src
 
 * Exécuter un bloc de code Julia
@@ -293,7 +298,7 @@ INFO is a list as returned by `org-babel-get-src-block-info'."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 #+end_src
 
-** DONE Redirection générique : ~org-babel-julia-evaluate~
+** DONE Redirection générique : ~org-babel-ess-julia-evaluate~
 CLOSED: [2020-09-28 lun. 10:22]
 C'est la fonction générale qui redirige l'évaluation du bloc de code
 vers l'une des fonctions plus spécifiques, selon que le bloc de code
@@ -301,23 +306,23 @@ est destiné à être exécuté dans une session précise, ou dans un
 process externe.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-julia-evaluate
+(defun org-babel-ess-julia-evaluate
   (session body result-type result-params column-names-p row-names-p)
   "Evaluate Julia code in BODY.
 This can be done either within an existing SESSION, or with an external process.
 This function only makes the convenient redirection towards the targeted
 helper function, depending on this parameter."
   (if session
-      (org-babel-julia-evaluate-session
+      (org-babel-ess-julia-evaluate-session
        session body result-type result-params column-names-p row-names-p)
-    (org-babel-julia-evaluate-external-process
+    (org-babel-ess-julia-evaluate-external-process
      body result-type result-params column-names-p row-names-p)))
 #+end_src
 
 ** IN-PROGRESS Mettre en forme le contenu d'un bloc de code
 :LOGBOOK:
 - Note taken on [2020-09-29 mar. 07:31] \\
-  Il faut revenir sur =org-babel-variable-assignments:julia params)=
+  Il faut revenir sur =org-babel-variable-assignments:ess-julia params)=
 :END:
 L'idée générale : en plus du bloc de code Julia lui-même, l'exécution
 des instructions peut nécessiter d'autres bouts de code externes, tels
@@ -334,7 +339,7 @@ En bref, les instructions à exécuter sont la concaténation du bloc de
 code lui-même avec ces trois autres potentiels éléments.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-expand-body:julia (body params &optional graphics-file)
+(defun org-babel-expand-body:ess-julia (body params &optional graphics-file)
   "Expand BODY according to PARAMS, return the expanded body.
 I.e., add :prologue and :epilogue to BODY if required, as well as new Julia
 variables declared from :var.  The 'expanded body' is actually the union set
@@ -347,7 +352,7 @@ of BODY and of all those instructions."
 	       (append
 	        (when (cdr (assq :prologue params))
 		  (list (cdr (assq :prologue params))))
-	        ;; TODO: (org-babel-variable-assignments:julia params)
+	        ;; TODO: (org-babel-variable-assignments:ess-julia params)
 	        (list body)
                 (when graphics-file
                   (list (format "plot!(size = (%s, %s))" width height)
@@ -376,8 +381,8 @@ il n'y a pas d'erreur produite.
 Voir ici : https://scls.gitbooks.io/ljthw/content/_chapters/11-ex8.html
 
 #+begin_src emacs-lisp :results output
-(defconst org-babel-julia-write-object-command
-  "ob_julia_write(%s, \"%s\", %s);"
+(defconst org-babel-ess-julia-write-object-command
+  "ob_ess_julia_write(%s, \"%s\", %s);"
   "A template for Julia to evaluate a block of code and write the result to a file.
 Has three %s escapes to be filled in:
 1. The code to be run (must be an expression, not a statement)
@@ -401,26 +406,26 @@ Ici, il n'y a rien de spécial à faire si on veut simplement une
   d'une fonction helper.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-julia-evaluate-external-process
+(defun org-babel-ess-julia-evaluate-external-process
     (body result-type result-params column-names-p row-names-p)
   "Evaluate BODY in an external Julia process.
 If RESULT-TYPE equals `output' then return standard output as a
 string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
   (if (equal result-type 'output)
-      (org-babel-eval org-babel-julia-command body)
+      (org-babel-eval org-babel-ess-julia-external-command body)
     ;; else: result-type != "output"
     (when (equal result-type 'value)
-      (let ((tmp-file (org-babel-temp-file "julia-")))
+      (let ((tmp-file (org-babel-temp-file "ess-julia-")))
         (org-babel-eval
-         (concat org-babel-julia-command
+         (concat org-babel-ess-julia-external-command
                  " "
-                 (format "--load=%s" ob-julia-startup))
-         (format org-babel-julia-write-object-command
+                 (format "--load=%s" ob-ess-julia-startup))
+         (format org-babel-ess-julia-write-object-command
                  (format "begin\n%s\nend" body)
                  (org-babel-process-file-name tmp-file 'noquote)
                  column-names-p))
-        (org-babel-julia-process-value-result
+        (org-babel-ess-julia-process-value-result
 	 (org-babel-result-cond result-params
 	   (with-temp-buffer
 	     (insert-file-contents tmp-file)
@@ -429,7 +434,7 @@ last statement in BODY, as elisp."
 	 column-names-p)))))
 #+end_src
 
-** IN-PROGRESS Évaluer à l'intérieur d'une session [4/7]
+** IN-PROGRESS Évaluer à l'intérieur d'une session [5/7]
    - [X] Gérer le type ~output~. Le code (extrait de ~ob-R~ est assez
      compliqué ici. Il s'agit en fait, séquentiellement, de passer le
      contenu du bloc de code (suivi de l'eoe-indicator qui en indique
@@ -443,7 +448,7 @@ last statement in BODY, as elisp."
      dans un fichier, puis de lire ces résultats comme dans le cas
      d'une évaluation externe.
    - [X] Gérer les tables
-   - [ ] Bug qui fait que certains blocs avec ~value~ doivent être
+   - [X] Bug qui fait que certains blocs avec ~value~ doivent être
      évalués deux fois pour retourner un résultat
    - [ ] Pour ~:results value~, ce n'est pas compatible avec polymode,
      alors que polymode marche bien avec ~:results output~... chercher
@@ -452,13 +457,13 @@ last statement in BODY, as elisp."
      *pas* de faire :
 #+begin_src emacs-lisp :results output :tangle no
 (setq org-src-lang-modes
-      (append org-src-lang-modes '(("julia" . ess-julia))))
+      (append org-src-lang-modes '(("ess-julia" . ess-julia))))
 #+end_src
      car cela produit un bug à l'évaluation.
    - [ ] Debug et amélioration de la clarté du code !
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-julia-evaluate-session
+(defun org-babel-ess-julia-evaluate-session
     (session body result-type result-params column-names-p row-names-p)
   "Evaluate BODY in a given Julia SESSION.
 If RESULT-TYPE equals `output' then return standard output as a
@@ -466,17 +471,17 @@ string.  If RESULT-TYPE equals `value' then return the value of the
 last statement in BODY, as elisp."
   (cl-case result-type
     (value
-     (let ((tmp-file (org-babel-temp-file "julia-"))
-           (tmp-file2 (org-babel-temp-file "julia-")))
+     (let ((tmp-file (org-babel-temp-file "ess-julia-"))
+           (tmp-file2 (org-babel-temp-file "ess-julia-")))
        (org-babel-comint-eval-invisibly-and-wait-for-file
 	session tmp-file2
         (org-babel-chomp
-         (format "@pipe begin\n%s\nend |> ob_julia_write(_, \"%s\", %s)\nwritedlm(\"%s\", [1 2 3 4])"
+         (format "@pipe begin\n%s\nend |> ob_ess_julia_write(_, \"%s\", %s)\nwritedlm(\"%s\", [1 2 3 4])"
                  body
                  (org-babel-process-file-name tmp-file 'noquote)
                  column-names-p
                  (org-babel-process-file-name tmp-file2 'noquote))))
-       (org-babel-julia-process-value-result
+       (org-babel-ess-julia-process-value-result
 	(org-babel-result-cond result-params
 	  (with-temp-buffer
 	    (insert-file-contents tmp-file)
@@ -491,13 +496,14 @@ last statement in BODY, as elisp."
              (mapcar
               (lambda (line) (when (> (length line) 0) line))
               (org-babel-comint-with-output
-                  (session org-babel-julia-eoe-indicator)
-                (ob-julia--execute-line-by-line body
-                                                org-babel-julia-eoe-indicator)))))
+                  (session org-babel-ess-julia-eoe-indicator)
+                (ob-ess-julia--execute-line-by-line
+                 body
+                 org-babel-ess-julia-eoe-indicator)))))
       "\n"))))
 #+end_src
 
-** DONE La fonction principale : ~org-babel-execute:julia~ [8/8]
+** DONE La fonction principale : ~org-babel-execute:ess-julia~ [8/8]
    CLOSED: [2020-10-07 mer. 14:18]
 C'est la fonction principale, i.e. ce qui se passe lors d'un ~C-c C-c~
 sur un bloc Julia. Cette fonction doit essentiellement faire ceci :
@@ -505,7 +511,7 @@ sur un bloc Julia. Cette fonction doit essentiellement faire ceci :
 - [X] Regarder s'il existe déjà une session Julia dans laquelle exécuter
   ce bloc de code. Le cas échéant, créer une nouvelle session, ou
   alors exécuter le bloc dans la session désirée déjà existante.
-- [X] Passer le ~body~ à la moulinette de ~org-babel-expand-body:julia~.
+- [X] Passer le ~body~ à la moulinette de ~org-babel-expand-body:ess-julia~.
 - [X] Récupérer le type et les paramètres des résultats du bloc de code.
 - [X] Si c'est une figure : dans quel fichier l'écrire ?
 - [X] Si c'est une figure : écrire effectivement les résultats dans
@@ -514,23 +520,23 @@ sur un bloc Julia. Cette fonction doit essentiellement faire ceci :
 - [X] Si c'est un graphique : aucune sortie textuelle ne doit être
   affichée
 - [X] Rassembler les arguments pour produire les résultats et
-  rediriger vers la fonction adéquate, ~org-babel-julia-evaluate~.
+  rediriger vers la fonction adéquate, ~org-babel-ess-julia-evaluate~.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-execute:julia (body params)
+(defun org-babel-execute:ess-julia (body params)
   "Execute a block of Julia code.
-The BODY on the block is first refactored with `org-babel-expand-body:julia',
+The BODY on the block is first refactored with `org-babel-expand-body:ess-julia',
 according to user-specified PARAMS.
 This function is called by `org-babel-execute-src-block'."
   (let* ((session-name (cdr (assq :session params)))
-         (session (org-babel-julia-initiate-session session-name params))
-         (graphics-file (org-babel-julia-graphical-output-file params))
+         (session (org-babel-ess-julia-initiate-session session-name params))
+         (graphics-file (org-babel-ess-julia-graphical-output-file params))
          (column-names-p (unless graphics-file (cdr (assq :colnames params))))
 	 (row-names-p (unless graphics-file (cdr (assq :rownames params))))
-         (expanded-body (org-babel-expand-body:julia body params graphics-file))
+         (expanded-body (org-babel-expand-body:ess-julia body params graphics-file))
          (result-params (cdr (assq :result-params params)))
 	 (result-type (cdr (assq :result-type params)))
-         (result (org-babel-julia-evaluate
+         (result (org-babel-ess-julia-evaluate
                   session expanded-body result-type result-params
                   (if column-names-p "true" "false")
                   ;; TODO: handle correctly the following last args for rownames
@@ -555,7 +561,7 @@ This function is called by `org-babel-execute-src-block'."
 ;; Dirty helpers for what seems to be a bug with iESS[Julia] buffers.
 ;; See https://github.com/emacs-ess/ESS/issues/1053
 
-(defun ob-julia--split-into-julia-commands (body org-babel-julia-eoe-indicator)
+(defun ob-ess-julia--split-into-julia-commands (body org-babel-ess-julia-eoe-indicator)
   "Split BODY into a list of valid Julia commands.
 Complete commands are elements of the list; incomplete commands (i.e., commands
 that are written on several lines) are `concat'enated, and then passed as one
@@ -578,14 +584,14 @@ This workaround avoids what seems to be a bug with iESS[julia] buffers."
         (setcar commands (concat (car commands)
                                  " "
                                  (pop cleaned-lines)))))
-    (reverse (cons org-babel-julia-eoe-indicator commands))))
+    (reverse (cons org-babel-ess-julia-eoe-indicator commands))))
 
-(defun ob-julia--execute-line-by-line (body org-babel-julia-eoe-indicator)
+(defun ob-ess-julia--execute-line-by-line (body org-babel-ess-julia-eoe-indicator)
   "Execute cleaned BODY into a Julia session.
 I.e., clean all Julia instructions, and send them one by one into the
 active iESS[julia] process.
 Instructions will end by an ORG-BABEL-JULIA-EOE-INDICATOR on Julia buffer."
-  (let ((lines (ob-julia--split-into-julia-commands body org-babel-julia-eoe-indicator))
+  (let ((lines (ob-ess-julia--split-into-julia-commands body org-babel-ess-julia-eoe-indicator))
         (jul-proc (get-process (process-name (get-buffer-process (current-buffer))))))
     (mapc
      (lambda (line)
@@ -610,7 +616,7 @@ compréhensible par Julia. Ce n'est donc plus un booléen lisp, mais une
 chaîne de caractères.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-julia-process-value-result (result column-names-p)
+(defun org-babel-ess-julia-process-value-result (result column-names-p)
   "Julia-specific processing for `:results value' output type.
 RESULT should have been computed upstream (and is typiclly retrieved
 from a temp file).
@@ -639,7 +645,7 @@ Pour rappel, ~params~ est une ~alist~ comportant de nombreux éléments
 spécifiés par l'utilisateur.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-julia-graphical-output-file (params)
+(defun org-babel-ess-julia-graphical-output-file (params)
   "Return the name of the file to which Julia should write graphical output.
 This name is extracted from user-specified PARAMS of a code block."
   (and (member "graphics" (cdr (assq :result-params params)))
@@ -652,10 +658,10 @@ Cela consiste à se placer dans le bon buffer de la session, puis à y
 copier un certain ~body~ tout à la fin.
 
 #+begin_src emacs-lisp :results output
-(defun org-babel-load-session:julia (session body params)
+(defun org-babel-load-session:ess-julia (session body params)
   "Load BODY into a given Julia SESSION."
   (save-window-excursion
-    (let ((buffer (org-babel-prep-session:julia session params)))
+    (let ((buffer (org-babel-prep-session:ess-julia session params)))
       (with-current-buffer buffer
         (goto-char (process-mark (get-buffer-process (current-buffer))))
         (insert (org-babel-chomp body)))
@@ -665,6 +671,6 @@ copier un certain ~body~ tout à la fin.
 * DONE Fin du code
 CLOSED: [2020-09-29 mar. 09:21]
 #+begin_src emacs-lisp :results output
-(provide 'ob-julia)
-;;; ob-julia.el ends here
+(provide 'ob-ess-julia)
+;;; ob-ess-julia.el ends here
 #+end_src
