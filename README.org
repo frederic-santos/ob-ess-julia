@@ -13,8 +13,8 @@ Following [[https://discourse.julialang.org/t/julia-within-org-mode-what-about-a
    - [X] Displaying output as org tables with ~:results value~ in session evaluation, with or without headers
    - [X] Get rid of annoying bug for ~:results output~ for session evaluation of multiline commands (possibly related to [[https://github.com/emacs-ess/ESS/issues/1053][a bug from ESS]]). A very inelegant workaround has been found.
    - [X] Handling ~:dir~ header argument to set working directory of ~ess-julia~ session
-   - [ ] Allow for more Julia types to be displayed with ~:results value~ (only arrays, dataframes, dictionaries and tuples are supported to date; other types might work as well but have not be tested yet)
    - [ ] Handling variables passed with ~:var~ header argument
+   - [ ] Allow for more Julia types to be displayed with ~:results value~ (only arrays, dataframes, dictionaries and tuples are supported to date; other types might work as well but have not be tested yet)
    - [ ] Better error management
    - [ ] Make ~ob-julia~ compatible with polymode so that ~ess-julia-mode~ can be used in the src blocks instead of ~julia-mode~
    - [ ] Improve documentation
