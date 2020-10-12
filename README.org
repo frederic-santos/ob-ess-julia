@@ -26,11 +26,9 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
 
 As a consequence, the general form of src blocks in ~ob-ess-julia~ is:
 
-#+begin_example
-  #+begin_src ess-julia
+=#+begin_src ess-julia=
 
-  #+end_src
-#+end_example
+=#+end_src=
 
 ** Disclaimer
 My current knowledge of both Julia and Elisp is very limited. Trying to make another fork of ~ob-julia~ is primarily a way of improving my knowledge in those two languages with a meaningful project. But I cannot guarantee that it is ready for public use (yet).
