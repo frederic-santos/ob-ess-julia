@@ -218,12 +218,15 @@ dtf = DataFrame(
 The ~:results value~ type of display is also supported. Some examples below.
 
 #+begin_src julia :results value :session *juliasession* :exports both
-root_colors = Dict("marquise" => "orange", "eyrie" => "blue")
+root_colors = Dict("marquise" => "orange", "eyrie" => "blue",
+                   "vagabond" => "gray", "woodland alliance" => "green")
 #+end_src
 
 #+RESULTS:
-| marquise | orange |
-| eyrie    | blue   |
+| woodland alliance | green  |
+| marquise          | orange |
+| eyrie             | blue   |
+| vagabond          | gray   |
 
 #+begin_src julia :results output graphics file :file example_plots/plot_session_dtf.png :session *juliasession* :exports both
 using Plots
