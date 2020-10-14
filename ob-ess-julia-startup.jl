@@ -25,3 +25,17 @@ function ob_ess_julia_write(bodycode::Any, filename::Any, has_header::Any)
         end
     end
 end
+
+# Specific Windows stuff:
+# (Contribution on GitHub by @fkgruber:
+# https://github.com/frederic-santos/ob-ess-julia/issues/1#issuecomment-707433134
+# )
+if Sys.iswindows()
+    println("In startup script")
+    using Base: stdin, stdout, stderr
+    using REPL.Terminals: TTYTerminal
+    using REPL: BasicREPL, run_repl
+    using DelimitedFiles
+    run_repl(BasicREPL(TTYTerminal("emacs",stdin,stdout,stderr)))
+    println("Finished initial startup")
+end
