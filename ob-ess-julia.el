@@ -9,15 +9,16 @@
 ;;   for consistency with other ob-* backends.
 
 ;; Author: Frédéric Santos
-;; Version: 2020-10-12
+;; Version: 2020-10-14
 ;; Keywords: babel, ess, julia, literate programming, org
-;; URL: https://gitlab.com/f-santos/ob-julia
+;; URL: https://gitlab.com/f-santos/ob-ess-julia
+;; Package-Requires: ((emacs "26.1") (ess "18.10.3snapshot") (cl-lib "0.6.1"))
 
 ;; This file is *not* part of GNU Emacs.
 
 ;;; Commentary:
 ;; This package intends to add an elementary support for Julia language
-;; in Org mode.  It is still at a very early stage of development.
+;; in Org mode.  It is still at an early stage of development.
 
 ;;; Code:
 
@@ -38,7 +39,7 @@
 (defcustom org-babel-ess-julia-external-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
-  :package-version '(ob-julia . "2020-10-12")
+  :package-version '(ob-julia . "2020-10-14")
   :version "27.1"
   :type 'string)
 
