@@ -37,19 +37,21 @@ Other (more advanced) forks of [[https://github.com/gjkerns/ob-julia][the good o
 
 * How to use ~ob-ess-julia~
 ** Installation
-This package is not hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialisation file:
+This package is not hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialisation file (I suppose here that you have ~use-package~ installed):
 
 #+begin_src emacs-lisp :results output
-;; Load ob-julia:
+;; Load ob-julia and dependencies
+(use-package julia-mode
+  :ensure t)
 (add-to-list 'load-path "/your/path/to/ob-ess-julia/") ; replace by your own path
 (require 'ob-ess-julia)
-(setq org-src-lang-modes
-      (append org-src-lang-modes '(("ess-julia" . ess-julia))))
-
-;; If Julia is not yet loaded into org supported languages:
+;; Add ess-julia into supported languages:
 (org-babel-do-load-languages 'org-babel-load-languages
                              (append org-babel-load-languages
-                                     '((julia . t))))
+                                     '((ess-julia . t))))
+;; Link this language to ess-julia-mode (although it should be done by default):
+(setq org-src-lang-modes
+      (append org-src-lang-modes '(("ess-julia" . ess-julia))))
 #+end_src
 
 ~ob-ess-julia~ is based on [[https://github.com/emacs-ess/ESS][ESS]]. Thus, the Emacs package ~ess~ is required.
