@@ -9,7 +9,7 @@
 ;;   for consistency with other ob-* backends.
 
 ;; Author: Frédéric Santos
-;; Version: 2020-10-14
+;; Version: 2020-10-21
 ;; Keywords: babel, ess, julia, literate programming, org
 ;; URL: https://gitlab.com/f-santos/ob-ess-julia
 ;; Package-Requires: ((emacs "26.1") (ess "18.10.3snapshot") (cl-lib "0.6.1"))
@@ -39,7 +39,7 @@
 (defcustom org-babel-ess-julia-external-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
-  :package-version '(ob-julia . "2020-10-14")
+  :package-version '(ob-julia . "2020-10-21")
   :version "27.1"
   :type 'string)
 
