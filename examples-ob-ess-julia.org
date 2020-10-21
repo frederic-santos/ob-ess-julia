@@ -145,7 +145,7 @@ school = RDatasets.dataset("mlmRev","Hsb82");
 [[file:example_plots/StatsPlots_density.png]]
 
 * IN-PROGRESS Evaluation within a session
-If a ~:session~ argument is given by the user in the header of a code block, this code block will be evaluated within a given Julia session, using ESS. Some simple examples are given below.
+If a ~:session~ argument is given by the user in the header of a code block, this code block will be evaluated within a given Julia session, using ESS. Some simple examples are given below. (Note that Julia sessions must be started with a ~C-c C-c~ on a code block, not manually with ~M-x julia~.)
 
 ** DONE A simple example of ~:session~ evaluation with ~:results output~
    CLOSED: [2020-10-12 lun. 07:51]
