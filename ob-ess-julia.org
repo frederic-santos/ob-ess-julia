@@ -66,6 +66,7 @@ Julia, à la fois pour l'évaluation externe et à travers une session.
   :type 'string)
 
 ;; For session eval, Julia will be called as an ESS process:
+(declare-function run-ess-julia "ext:ess-julia" (&optional start-args))
 (declare-function julia "ext:ess-julia" (&optional start-args))
 #+end_src
 

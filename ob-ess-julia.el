@@ -44,6 +44,7 @@
   :type 'string)
 
 ;; For session eval, Julia will be called as an ESS process:
+(declare-function run-ess-julia "ext:ess-julia" (&optional start-args))
 (declare-function julia "ext:ess-julia" (&optional start-args))
 
 (defun run-julia-and-select-buffer (&optional start-args)
