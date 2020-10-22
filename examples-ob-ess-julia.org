@@ -265,5 +265,82 @@ a = [7 8 9 10]
 #+end_src
 
 #+RESULTS:
+: 
 : 1×4 Array{Int64,2}:
 :  7  8  9  10
+
+* IN-PROGRESS Passing variables with ~:var~
+** DONE Atomic values
+   CLOSED: [2020-10-22 jeu. 10:02]
+Consider the following R code block, defining an atomic value ~Rvar~:
+
+#+NAME: Rvar
+#+begin_src R :results value :session *R* :exports both
+Rvar <- 2
+#+end_src
+
+#+RESULTS: Rvar
+: 2
+
+This variable ~Rvar~ can be passed into a Julia session using the ~:var~ header argument:
+#+begin_src ess-julia :results output :session *juliasession* :exports both :var Rvar=Rvar
+Rvar
+#+end_src
+
+#+RESULTS:
+: 2
+
+** IN-PROGRESS Non-atomic values
+It's also possible to pass non-atomic values such as dataframes between various languages. For instance, let's create a dataframe in R:
+
+#+NAME: Rdtf
+#+begin_src R :results value :session *R* :exports both :colnames yes
+Rdtf <- head(iris)
+Rdtf
+#+end_src
+
+#+RESULTS: Rdtf
+| Sepal.Length | Sepal.Width | Petal.Length | Petal.Width | Species |
+|--------------+-------------+--------------+-------------+---------|
+|          5.1 |         3.5 |          1.4 |         0.2 | setosa  |
+|          4.9 |           3 |          1.4 |         0.2 | setosa  |
+|          4.7 |         3.2 |          1.3 |         0.2 | setosa  |
+|          4.6 |         3.1 |          1.5 |         0.2 | setosa  |
+|            5 |         3.6 |          1.4 |         0.2 | setosa  |
+|          5.4 |         3.9 |          1.7 |         0.4 | setosa  |
+
+This dataframe ~Rdtf~ can then be passed into the Julia session with the proper ~:var~ header argument. Here is its display as a ~value table~:
+
+#+begin_src ess-julia :results value table :session *juliasession* :exports both :var Rdtf=Rdtf :colnames yes
+Rdtf
+#+end_src
+
+#+RESULTS:
+| Sepal.Length | Sepal.Width | Petal.Length | Petal.Width | Species |
+|--------------+-------------+--------------+-------------+---------|
+|          5.1 |         3.5 |          1.4 |         0.2 | setosa  |
+|          4.9 |         3.0 |          1.4 |         0.2 | setosa  |
+|          4.7 |         3.2 |          1.3 |         0.2 | setosa  |
+|          4.6 |         3.1 |          1.5 |         0.2 | setosa  |
+|          5.0 |         3.6 |          1.4 |         0.2 | setosa  |
+|          5.4 |         3.9 |          1.7 |         0.4 | setosa  |
+
+and its display as an ~output~:
+
+#+begin_src ess-julia :results output :session *juliasession* :exports both :var Rdtf=Rdtf
+Rdtf
+#+end_src
+
+#+RESULTS:
+#+begin_example
+6×5 DataFrame
+│ Row │ Sepal.Length │ Sepal.Width │ Petal.Length │ Petal.Width │ Species │
+│     │ Float64      │ Float64     │ Float64      │ Float64     │ String  │
+├─────┼──────────────┼─────────────┼──────────────┼─────────────┼─────────┤
+│ 1   │ 5.1          │ 3.5         │ 1.4          │ 0.2         │ setosa  │
+│ 2   │ 4.9          │ 3.0         │ 1.4          │ 0.2         │ setosa  │
+│ 3   │ 4.7          │ 3.2         │ 1.3          │ 0.2         │ setosa  │
+│ 4   │ 4.6          │ 3.1         │ 1.5          │ 0.2         │ setosa  │
+│ 5   │ 5.0          │ 3.6         │ 1.4          │ 0.2         │ setosa  │
+│ 6   │ 5.4          │ 3.9         │ 1.7          │ 0.4         │ setosa  │
+#+end_example
