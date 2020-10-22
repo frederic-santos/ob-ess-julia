@@ -35,6 +35,9 @@
 (declare-function ess-wait-for-process "ext:ess-inf"
 		  (&optional proc sec-prompt wait force-redisplay))
 
+;; External functions from Org:
+(declare-function orgtbl-to-csv "org-table" (table params))
+
 ;; For external eval, we do not rely on ESS:
 (defcustom org-babel-ess-julia-external-command "julia"
   "Name of command to use for executing Julia code."
@@ -210,7 +213,7 @@ of BODY and of all those instructions."
 	       (append
 	        (when (cdr (assq :prologue params))
 		  (list (cdr (assq :prologue params))))
-	        ;; TODO: (org-babel-variable-assignments:ess-julia params)
+	        (org-babel-variable-assignments:ess-julia params)
 	        (list body)
                 (when graphics-file
                   (list (format "plot!(size = (%s, %s))" width height)
@@ -387,6 +390,36 @@ This name is extracted from user-specified PARAMS of a code block."
         (goto-char (process-mark (get-buffer-process (current-buffer))))
         (insert (org-babel-chomp body)))
       buffer)))
+
+(defun org-babel-ess-julia-quote-csv-field (s)
+  "Quote field S, if S is a string."
+  (if (stringp s)
+      (concat "\""
+              (mapconcat 'identity
+                         (split-string s "\"")
+                         "\"\"")
+              "\"")
+    (format "%S" s)))
+
+(defun org-babel-ess-julia-assign-elisp (name value colnames-p rownames-p)
+  "Construct Julia code assigning the elisp VALUE to a Julia variable named NAME."
+  (if (listp value)
+      (let ((transition-file (org-babel-temp-file "julia-import-")))
+        ;; ensure VALUE has an orgtbl structure (depth of at least 2):
+        (unless (listp (car value)) (setq value (list value)))
+        (with-temp-file transition-file
+          (insert
+	   (orgtbl-to-csv value '(:fmt org-babel-ess-julia-quote-csv-field))
+	   "\n"))
+	(let ((file (org-babel-process-file-name transition-file 'noquote))
+	      (header (if (or (eq (nth 1 value) 'hline)
+                              (equal colnames-p "true"))
+			  "1"
+                        "false")))
+	  (format "%s = CSV.read(\"%s\", header=%s, delim=\",\");"
+                  name file header)))
+    ;; else, value is not a list: just produce something like "name = value":
+    (format "%s = %s;" name (org-babel-ess-julia-quote-csv-field value))))
 
 (provide 'ob-ess-julia)
 ;;; ob-ess-julia.el ends here

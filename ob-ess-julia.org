@@ -48,6 +48,9 @@ CLOSED: [2020-09-28 lun. 09:46]
 (declare-function ess-eval-buffer "ext:ess-inf" (vis))
 (declare-function ess-wait-for-process "ext:ess-inf"
 		  (&optional proc sec-prompt wait force-redisplay))
+
+;; External functions from Org:
+(declare-function orgtbl-to-csv "org-table" (table params))
 #+end_src
 
 * Définition de variables et constantes globales
@@ -336,12 +339,12 @@ L'idée générale : en plus du bloc de code Julia lui-même, l'exécution
 des instructions peut nécessiter d'autres bouts de code externes, tels
 que :
 - un [[https://orgmode.org/manual/Environment-of-a-Code-Block.html#Environment-of-a-Code-Block][prologue]] exécuté avant le bloc de code lui-même ;
+- assigner certaines nouvelles variables avec ~:var~.
 - si besoin, l'instruction Julia =savefig()= permettant d'exporter un
   graphique ;
 - si besoin, l'instruction Julia =plot!(size = (...))= qui permet de
   déterminer la taille en pixels du graphique ;
 - un [[https://orgmode.org/manual/Environment-of-a-Code-Block.html#Environment-of-a-Code-Block][épilogue]] exécuté à la fin du bloc de code ;
-- l'assignement de certaines nouvelles variables avec ~:var~.
 
 En bref, les instructions à exécuter sont la concaténation du bloc de
 code lui-même avec ces trois autres potentiels éléments.
@@ -360,7 +363,7 @@ of BODY and of all those instructions."
 	       (append
 	        (when (cdr (assq :prologue params))
 		  (list (cdr (assq :prologue params))))
-	        ;; TODO: (org-babel-variable-assignments:ess-julia params)
+	        (org-babel-variable-assignments:ess-julia params)
 	        (list body)
                 (when graphics-file
                   (list (format "plot!(size = (%s, %s))" width height)
@@ -618,7 +621,7 @@ Cette fonction ne fait sens que dans le cas où on retourne une table :
 dans ce cas, elle sépare simplement la ligne de titre. Sinon, elle est
 simplement la fonction identité.
 
-Attention : dans la fonction ~org-babel-execute:julia~ (la toute
+*Attention* : dans la fonction ~org-babel-execute:julia~ (la toute
 première à être déclenchée par un ~C-c C-c~), l'argument
 ~column-names-p~ est transformé en "true" ou "false", pour qu'il soit
 compréhensible par Julia. Ce n'est donc plus un booléen lisp, mais une
@@ -675,6 +678,52 @@ copier un certain ~body~ tout à la fin.
         (goto-char (process-mark (get-buffer-process (current-buffer))))
         (insert (org-babel-chomp body)))
       buffer)))
+#+end_src
+
+** IN-PROGRESS Produire des expressions Julia pour assigner des variables [1/2]
+*** DONE Helper pour quoter des champs de feuilles CSV
+    CLOSED: [2020-10-22 jeu. 08:50]
+#+begin_src emacs-lisp :results output
+(defun org-babel-ess-julia-quote-csv-field (s)
+  "Quote field S, if S is a string."
+  (if (stringp s)
+      (concat "\""
+              (mapconcat 'identity
+                         (split-string s "\"")
+                         "\"\"")
+              "\"")
+    (format "%S" s)))
+#+end_src
+
+*** IN-PROGRESS Produire les expressions Julia
+Dans cette fonction :
+- si VALUE est une valeur atomique (e.g., 2), alors on produit
+  simplement une expression du type =name = value=;
+- sinon, VALUE a une structure de liste, donc interprétable comme une
+  structure de table org. On va donc écrire la variable lisp VALUE
+  dans un fichier csv avec =orgtbl-to-csv=, puis importer ce csv avec
+  Julia. Attention, il faut gérer au passage la présence de headers.
+
+#+begin_src emacs-lisp :results output
+(defun org-babel-ess-julia-assign-elisp (name value colnames-p rownames-p)
+  "Construct Julia code assigning the elisp VALUE to a Julia variable named NAME."
+  (if (listp value)
+      (let ((transition-file (org-babel-temp-file "julia-import-")))
+        ;; ensure VALUE has an orgtbl structure (depth of at least 2):
+        (unless (listp (car value)) (setq value (list value)))
+        (with-temp-file transition-file
+          (insert
+	   (orgtbl-to-csv value '(:fmt org-babel-ess-julia-quote-csv-field))
+	   "\n"))
+	(let ((file (org-babel-process-file-name transition-file 'noquote))
+	      (header (if (or (eq (nth 1 value) 'hline)
+                              (equal colnames-p "true"))
+			  "1"
+                        "false")))
+	  (format "%s = CSV.read(\"%s\", header=%s, delim=\",\");"
+                  name file header)))
+    ;; else, value is not a list: just produce something like "name = value":
+    (format "%s = %s;" name (org-babel-ess-julia-quote-csv-field value))))
 #+end_src
 
 * DONE Fin du code
