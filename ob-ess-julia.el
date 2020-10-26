@@ -328,14 +328,13 @@ This function is called by `org-babel-execute-src-block'."
 ;; Dirty helpers for what seems to be a bug with iESS[Julia] buffers.
 ;; See https://github.com/emacs-ess/ESS/issues/1053
 
-(defun ob-ess-julia--split-into-julia-commands (body org-babel-ess-julia-eoe-indicator)
+(defun ob-ess-julia--split-into-julia-commands (body eoe-indicator)
   "Split BODY into a list of valid Julia commands.
 Complete commands are elements of the list; incomplete commands (i.e., commands
 that are written on several lines) are `concat'enated, and then passed as one
 single element of the list.
-Adds string ORG-BABEL-JULIA-EOE-INDICATOR at the end of all instructions.
-This workaround avoids what seems to be a bug with iESS[julia] buffers.
-The value (string) of ORG-BABEL-ESS-JULIA-EOE-INDICATOR is inserted at the end."
+Adds string EOE-INDICATOR at the end of all instructions.
+This workaround avoids what seems to be a bug with iESS[julia] buffers.""
   (let* ((lines (split-string body
                               "\n" t))
          (cleaned-lines (mapcar 'org-babel-chomp lines))
@@ -352,14 +351,14 @@ The value (string) of ORG-BABEL-ESS-JULIA-EOE-INDICATOR is inserted at the end."
         (setcar commands (concat (car commands)
                                  " "
                                  (pop cleaned-lines)))))
-    (reverse (cons org-babel-ess-julia-eoe-indicator commands))))
+    (reverse (cons eoe-indicator commands))))
 
-(defun ob-ess-julia--execute-line-by-line (body org-babel-ess-julia-eoe-indicator)
+(defun ob-ess-julia--execute-line-by-line (body eoe-indicator)
   "Execute cleaned BODY into a Julia session.
 I.e., clean all Julia instructions, and send them one by one into the
 active iESS[julia] process.
-Instructions will end by an ORG-BABEL-ESS-JULIA-EOE-INDICATOR on Julia buffer."
-  (let ((lines (ob-ess-julia--split-into-julia-commands body org-babel-ess-julia-eoe-indicator))
+Instructions will end by string EOE-INDICATOR on Julia buffer."
+  (let ((lines (ob-ess-julia--split-into-julia-commands body eoe-indicator))
         (jul-proc (get-process (process-name (get-buffer-process (current-buffer))))))
     (mapc
      (lambda (line)
