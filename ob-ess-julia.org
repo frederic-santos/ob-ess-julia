@@ -48,8 +48,9 @@ CLOSED: [2020-09-28 lun. 09:46]
 (declare-function ess-wait-for-process "ext:ess-inf"
 		  (&optional proc sec-prompt wait force-redisplay))
 
-;; External functions from Org:
+;; Other external functions:
 (declare-function orgtbl-to-csv "org-table" (table params))
+(declare-function s-matches? "s" (regexp s &optional start))
 #+end_src
 
 * Définition de variables et constantes globales

@@ -34,8 +34,9 @@
 (declare-function ess-wait-for-process "ext:ess-inf"
 		  (&optional proc sec-prompt wait force-redisplay))
 
-;; External functions from Org:
+;; Other external functions:
 (declare-function orgtbl-to-csv "org-table" (table params))
+(declare-function s-matches? "s" (regexp s &optional start))
 
 ;; For external eval, we do not rely on ESS:
 (defcustom org-babel-ess-julia-external-command "julia"
