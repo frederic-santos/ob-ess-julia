@@ -334,7 +334,7 @@ Complete commands are elements of the list; incomplete commands (i.e., commands
 that are written on several lines) are `concat'enated, and then passed as one
 single element of the list.
 Adds string EOE-INDICATOR at the end of all instructions.
-This workaround avoids what seems to be a bug with iESS[julia] buffers.""
+This workaround avoids what seems to be a bug with iESS[julia] buffers."
   (let* ((lines (split-string body
                               "\n" t))
          (cleaned-lines (mapcar 'org-babel-chomp lines))
