@@ -1,5 +1,4 @@
-;;; ob-ess-julia --- Org babel support for Julia language,
-;;;                  based on ESS.
+;;; ob-ess-julia.el --- Org babel support for Julia language -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020
 ;; Credits:
@@ -9,16 +8,16 @@
 ;;   for consistency with other ob-* backends.
 
 ;; Author: Frédéric Santos
-;; Version: 2020-10-21
-;; Keywords: babel, ess, julia, literate programming, org
-;; URL: https://gitlab.com/f-santos/ob-ess-julia
-;; Package-Requires: ((emacs "26.1") (ess "18.10.3snapshot") (cl-lib "0.6.1"))
+;; Package-Version: 1.0.0
+;; Keywords: languages
+;; URL: https://github.com/frederic-santos/ob-ess-julia
+;; Package-Requires: ((emacs "26.1") (ess "20201004.1522"))
 
 ;; This file is *not* part of GNU Emacs.
 
 ;;; Commentary:
-;; This package intends to add an elementary support for Julia language
-;; in Org mode.  It is still at an early stage of development.
+;; This package provides an elementary support for Julia language
+;; in Org mode.
 
 ;;; Code:
 
@@ -42,7 +41,7 @@
 (defcustom org-babel-ess-julia-external-command "julia"
   "Name of command to use for executing Julia code."
   :group 'org-babel
-  :package-version '(ob-julia . "2020-10-21")
+  :package-version '(ob-ess-julia . "1.0.0")
   :version "27.1"
   :type 'string)
 
@@ -176,7 +175,7 @@ current code buffer."
 
 (defun org-babel-edit-prep:ess-julia (info)
   "Function to edit Julia code in OrgSrc mode.
-(I.e., for use with, and is called by, `org-edit-src-code'.)
+I.e., for use with, and is called by, `org-edit-src-code'.
 INFO is a list as returned by `org-babel-get-src-block-info'."
   (let ((session (cdr (assq :session (nth 2 info)))))
     (when (and session
@@ -224,7 +223,7 @@ of BODY and of all those instructions."
 
 (defconst org-babel-ess-julia-write-object-command
   "ob_ess_julia_write(%s, \"%s\", %s);"
-  "A template for Julia to evaluate a block of code and write the result to a file.
+  "A Julia function to evaluate code blocks and write the result to a file.
 Has three %s escapes to be filled in:
 1. The code to be run (must be an expression, not a statement)
 2. The name of the file to write to
@@ -298,7 +297,7 @@ last statement in BODY, as elisp."
 
 (defun org-babel-execute:ess-julia (body params)
   "Execute a block of Julia code.
-The BODY on the block is first refactored with `org-babel-expand-body:ess-julia',
+The BODY is first refactored with `org-babel-expand-body:ess-julia',
 according to user-specified PARAMS.
 This function is called by `org-babel-execute-src-block'."
   (let* ((session-name (cdr (assq :session params)))
