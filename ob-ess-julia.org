@@ -448,7 +448,7 @@ COLUMN-NAMES-P and ROW-NAMES-P are either \"true\" of \"false\"."
 	 column-names-p)))))
 #+end_src
 
-** IN-PROGRESS Évaluer à l'intérieur d'une session [5/7]
+** IN-PROGRESS Évaluer à l'intérieur d'une session [6/7]
    - [X] Gérer le type ~output~. Le code (extrait de ~ob-R~ est assez
      compliqué ici. Il s'agit en fait, séquentiellement, de passer le
      contenu du bloc de code (suivi de l'eoe-indicator qui en indique
@@ -464,7 +464,7 @@ COLUMN-NAMES-P and ROW-NAMES-P are either \"true\" of \"false\"."
    - [X] Gérer les tables
    - [X] Bug qui fait que certains blocs avec ~value~ doivent être
      évalués deux fois pour retourner un résultat
-   - [ ] Pour ~:results value~, ce n'est pas compatible avec polymode,
+   - [X] Pour ~:results value~, ce n'est pas compatible avec polymode,
      alors que polymode marche bien avec ~:results output~... chercher
      pourquoi. De manière générale, la gestion du code pour ~value~
      est assez inélégante... La compatibilité avec polymode ne serait
@@ -474,7 +474,7 @@ COLUMN-NAMES-P and ROW-NAMES-P are either \"true\" of \"false\"."
       (append org-src-lang-modes '(("ess-julia" . ess-julia))))
 #+end_src
      car cela produit un bug à l'évaluation.
-   - [ ] Debug et amélioration de la clarté du code !
+   - [ ] Amélioration de la clarté du code
 
 #+begin_src emacs-lisp :results output
 (defun org-babel-ess-julia-evaluate-session
