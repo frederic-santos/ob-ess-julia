@@ -208,7 +208,7 @@ of BODY and of all those instructions."
                    600))
         (height (or (cdr (assq :height params))
                     400)))
-    (mapconcat 'identity
+    (mapconcat #'identity
 	       (append
 	        (when (cdr (assq :prologue params))
 		  (list (cdr (assq :prologue params))))
@@ -283,7 +283,7 @@ last statement in BODY, as elisp."
 	column-names-p)))
     (output
      (mapconcat
-      'org-babel-chomp
+      #'org-babel-chomp
       (butlast
        (delq nil
              (mapcar
@@ -394,7 +394,7 @@ This name is extracted from user-specified PARAMS of a code block."
   "Quote field S, if S is a string."
   (if (stringp s)
       (concat "\""
-              (mapconcat 'identity
+              (mapconcat #'identity
                          (split-string s "\"")
                          "\"\"")
               "\"")
