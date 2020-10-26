@@ -203,7 +203,8 @@ helper function, depending on this parameter."
   "Expand BODY according to PARAMS, return the expanded body.
 I.e., add :prologue and :epilogue to BODY if required, as well as new Julia
 variables declared from :var.  The 'expanded body' is actually the union set
-of BODY and of all those instructions."
+of BODY and of all those instructions.
+GRAPHICS-FILE is a boolean."
   (let ((width (or (cdr (assq :width params))
                    600))
         (height (or (cdr (assq :height params))
@@ -234,7 +235,9 @@ Has three %s escapes to be filled in:
   "Evaluate BODY in an external Julia process.
 If RESULT-TYPE equals `output' then return standard output as a
 string.  If RESULT-TYPE equals `value' then return the value of the
-last statement in BODY, as elisp."
+last statement in BODY, as elisp.
+RESULT-PARAMS is an alist of user-specified parameters.
+COLUMN-NAMES-P and ROW-NAMES-P are either \"true\" of \"false\"."
   (if (equal result-type 'output)
       (org-babel-eval org-babel-ess-julia-external-command body)
     ;; else: result-type != "output"
@@ -331,7 +334,8 @@ Complete commands are elements of the list; incomplete commands (i.e., commands
 that are written on several lines) are `concat'enated, and then passed as one
 single element of the list.
 Adds string ORG-BABEL-JULIA-EOE-INDICATOR at the end of all instructions.
-This workaround avoids what seems to be a bug with iESS[julia] buffers."
+This workaround avoids what seems to be a bug with iESS[julia] buffers.
+The value (string) of ORG-BABEL-ESS-JULIA-EOE-INDICATOR is inserted at the end."
   (let* ((lines (split-string body
                               "\n" t))
          (cleaned-lines (mapcar 'org-babel-chomp lines))
@@ -354,7 +358,7 @@ This workaround avoids what seems to be a bug with iESS[julia] buffers."
   "Execute cleaned BODY into a Julia session.
 I.e., clean all Julia instructions, and send them one by one into the
 active iESS[julia] process.
-Instructions will end by an ORG-BABEL-JULIA-EOE-INDICATOR on Julia buffer."
+Instructions will end by an ORG-BABEL-ESS-JULIA-EOE-INDICATOR on Julia buffer."
   (let ((lines (ob-ess-julia--split-into-julia-commands body org-babel-ess-julia-eoe-indicator))
         (jul-proc (get-process (process-name (get-buffer-process (current-buffer))))))
     (mapc
