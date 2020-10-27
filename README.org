@@ -30,7 +30,7 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
    - [ ] (Maybe, one day,) host this package on MELPA if it reaches a sufficient quality
 
 ** Alternatives for using Julia in Org mode
-- Another (maybe more advanced) fork of the original ~ob-julia~ [[https://git.nixo.xyz/nixo/ob-julia][is available online]]. It offers advanced options such as async evaluation.
+- Another fork of the original ~ob-julia~ [[https://git.nixo.xyz/nixo/ob-julia][is available online]]. It offers advanced options such as async evaluation.
 - Using a Jupyter Julia kernel from within Emacs is also possible.
 
 * How to use ~ob-ess-julia~
