@@ -12,7 +12,7 @@
 ;; Package-Version: 1.0.0
 ;; Keywords: languages
 ;; URL: https://github.com/frederic-santos/ob-ess-julia
-;; Package-Requires: ((emacs "26.1") (ess "20201004.1522"))
+;; Package-Requires: ((emacs "26.1") (ess "18.10.2") (julia-mode "0.4"))
 
 ;; This file is *not* part of GNU Emacs.
 
@@ -51,7 +51,7 @@
 (declare-function run-ess-julia "ext:ess-julia" (&optional start-args))
 (declare-function julia "ext:ess-julia" (&optional start-args))
 
-(defun run-julia-and-select-buffer (&optional start-args)
+(defun ob-ess-julia--run-julia-and-select-buffer (&optional start-args)
   "Run Julia with ESS and make sure that its inferior buffer will be active.
 START-ARGS is passed to `run-ess-julia'."
   (interactive "P")
@@ -117,7 +117,7 @@ PARAMS are user-specified src block parameters."
           (when (get-buffer session)
 	    ;; Session buffer exists, but with dead process
 	    (set-buffer session))
-	  (run-julia-and-select-buffer) ; create new Julia comint buffer
+	  (ob-ess-julia--run-julia-and-select-buffer) ; new Julia comint buffer
           (when dir
             (ess-eval-linewise (format "cd(\"%s\")" dir)))
 	  (rename-buffer
