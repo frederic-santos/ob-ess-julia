@@ -21,7 +21,7 @@ L'en-tête :
 ;; Version: 1.0.0
 ;; Keywords: languages
 ;; URL: https://github.com/frederic-santos/ob-ess-julia
-;; Package-Requires: ((emacs "26.1") (ess "18.10.2") (julia-mode "0.4"))
+;; Package-Requires: ((emacs "26.1") (ess "20201004.1522") (julia-mode "0.4"))
 
 ;; This file is *not* part of GNU Emacs.
 
