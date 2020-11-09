@@ -18,7 +18,7 @@ L'en-tête :
 ;;   for consistency with other ob-* backends.
 
 ;; Author: Frédéric Santos
-;; Package-Version: 1.0.0
+;; Version: 1.0.0
 ;; Keywords: languages
 ;; URL: https://github.com/frederic-santos/ob-ess-julia
 ;; Package-Requires: ((emacs "26.1") (ess "18.10.2") (julia-mode "0.4"))
