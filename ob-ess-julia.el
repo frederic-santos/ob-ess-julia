@@ -1,7 +1,7 @@
 ;;; ob-ess-julia.el --- Org babel support for Julia language -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020
-;; License: CeCILL 2.1
+;; SPDX-License-Identifier: CECILL-2.
 ;; Credits:
 ;; - Primarily based on / forked from G. J. Kerns' ob-julia.
 ;;   See the original version at https://github.com/gjkerns/ob-julia
