@@ -586,7 +586,7 @@ Adds string EOE-INDICATOR at the end of all instructions.
 This workaround avoids what seems to be a bug with iESS[julia] buffers."
   (let* ((lines (split-string body
                               "\n" t))
-         (cleaned-lines (mapcar 'org-babel-chomp lines))
+         (cleaned-lines (mapcar #'org-babel-chomp lines))
          (last-end-char nil)
          (commands nil))
     (while cleaned-lines
