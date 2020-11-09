@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: CECILL-2.1
+
 # Check that required packages are installed:
 if Base.find_package("CSV") == nothing || Base.find_package("DelimitedFiles") == nothing || Base.find_package("Pipe") == nothing
     using Pkg
