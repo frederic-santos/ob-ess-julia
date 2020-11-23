@@ -15,7 +15,7 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
 
 =#+end_src=
 
-** Implemented features and TODOs [57%]
+** Implemented features and TODOs [64%]
    - [X] External evaluation with verbatim output (~:results output~)
    - [X] External evaluation with well-formatted output (~:results value~), for standard Julia data structures and DataFrames
    - [X] Session evaluation (using inferior ESS processes) with ~:session~ header argument
@@ -24,12 +24,12 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
    - [X] Displaying output as org tables with ~:results value~ in session evaluation, with or without headers
    - [X] Make ~ob-ess-julia~ compatible with polymode so that ~ess-julia-mode~ can be used as innermode in the src blocks
    - [X] Handling variables passed with ~:var~ header argument
+   - [X] Host this package on MELPA
    - [ ] Handling ~:dir~ header argument to set working directory of ~ess-julia~ session (works, but with a glitch)
    - [ ] Allow for more Julia types to be displayed with ~:results value~ (only arrays, dataframes, dictionaries and tuples are supported to date; other types might work as well but have not be tested yet)
    - [ ] Better error management
    - [ ] Improve documentation
    - [ ] Implement some simple unit tests
-   - [ ] (Maybe, one day,) host this package on MELPA if it reaches a sufficient quality
 
 ** Alternatives for using Julia in Org mode
 - Another fork of the original ~ob-julia~ [[https://git.nixo.xyz/nixo/ob-julia][is available online]]. It offers advanced options such as async evaluation.
@@ -37,7 +37,7 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
 
 * How to use ~ob-ess-julia~
 ** Installation and settings
-This package can be installed from MELPA. For instance, if you have ~[[https://github.com/jwiegley/use-package][use-package]]~ installed, simply add the following lines to your Emacs initialisation file:
+This package can be installed from MELPA. For instance, if you have [[https://github.com/jwiegley/use-package][use-package]] installed, simply add the following lines to your Emacs initialisation file:
 
 #+begin_src emacs-lisp :results output
 ;; Load ob-ess-julia and dependencies
