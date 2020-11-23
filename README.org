@@ -1,6 +1,8 @@
 #+TITLE: ob-ess-julia, a lightweight Julia support for Org mode using ESS
 #+AUTHOR: Frédéric Santos
 
+[[https://melpa.org/#/ob-ess-julia][file:https://melpa.org/packages/ob-ess-julia-badge.svg]]
+
 * Introduction
 ~ob-ess-julia~ intends to offer a lightweight support for Julia language into Org mode. This is still an incomplete implementation to date, roughly in an alpha stage.
 
@@ -34,22 +36,21 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
 - Using a Jupyter Julia kernel from within Emacs is also possible.
 
 * How to use ~ob-ess-julia~
-** Installation
-This package is not hosted on MELPA. Thus, simply download the whole Git repo somewhere on your hard drive, and add the following lines to your Emacs initialisation file (I suppose here that you have ~use-package~ installed):
+** Installation and settings
+This package can be installed from MELPA. For instance, if you have [[https://github.com/jwiegley/use-package][~use-package~]] installed, simply add the following lines to your Emacs initialisation file:
 
 #+begin_src emacs-lisp :results output
-;; Load ob-julia and dependencies
-(use-package julia-mode
-  :ensure t)
-(add-to-list 'load-path "/your/path/to/ob-ess-julia/") ; replace by your own path
-(require 'ob-ess-julia)
-;; Add ess-julia into supported languages:
-(org-babel-do-load-languages 'org-babel-load-languages
-                             (append org-babel-load-languages
-                                     '((ess-julia . t))))
-;; Link this language to ess-julia-mode (although it should be done by default):
-(setq org-src-lang-modes
-      (append org-src-lang-modes '(("ess-julia" . ess-julia))))
+;; Load ob-ess-julia and dependencies
+(use-package ob-ess-julia
+  :ensure t
+  :config
+  ;; Add ess-julia into supported languages:
+  (org-babel-do-load-languages 'org-babel-load-languages
+                               (append org-babel-load-languages
+                                       '((ess-julia . t))))
+  ;; Link this language to ess-julia-mode (although it should be done by default):
+  (setq org-src-lang-modes
+        (append org-src-lang-modes '(("ess-julia" . ess-julia)))))
 #+end_src
 
 ** Demo
