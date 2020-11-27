@@ -1,7 +1,7 @@
 #+TITLE: ob-ess-julia, a lightweight Julia support for Org mode using ESS
 #+AUTHOR: Frédéric Santos
 
-[[https://melpa.org/#/ob-ess-julia][file:https://melpa.org/packages/ob-ess-julia-badge.svg]]
+[[https://melpa.org/#/ob-ess-julia][file:https://melpa.org/packages/ob-ess-julia-badge.svg]] [[https://stable.melpa.org/#/ob-ess-julia][file:https://stable.melpa.org/packages/ob-ess-julia-badge.svg]]
 
 * Introduction
 ~ob-ess-julia~ intends to offer a lightweight support for Julia language into Org mode. This is still an incomplete implementation to date, roughly in an alpha stage.
