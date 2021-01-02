@@ -32,6 +32,7 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
    - [ ] Implement some simple unit tests
 
 ** Alternatives for using Julia in Org mode
+- [[https://github.com/shg/ob-julia-vterm.el][ob-julia-vterm]] is a solid alternative, relying on ~julia-vterm~ (which avoids some of the limitations imposed by ESS and/or the usual terminal emulator).
 - Another fork of the original ~ob-julia~ [[https://git.nixo.xyz/nixo/ob-julia][is available online]]. It offers advanced options such as async evaluation.
 - Using a Jupyter Julia kernel from within Emacs is also possible.
 
