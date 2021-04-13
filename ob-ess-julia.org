@@ -2,6 +2,7 @@
 #+SUBTITLE: Un document org pour tangler le code source
 #+AUTHOR: Frédéric Santos
 #+PROPERTY: header-args :tangle ob-ess-julia.el
+#+OPTIONS: ^:nil
 
 * DONE Frontmatter
 CLOSED: [2020-09-28 lun. 09:46]
@@ -464,8 +465,16 @@ COLUMN-NAMES-P and ROW-NAMES-P are either \"true\" of \"false\"."
      dans un fichier, puis de lire ces résultats comme dans le cas
      d'une évaluation externe.
    - [X] Gérer les tables
-   - [X] Bug qui fait que certains blocs avec ~value~ doivent être
-     évalués deux fois pour retourner un résultat
+   - [X] Bug qui fait que certains blocs doivent être évalués deux
+     fois pour retourner un résultat. Cela est dû au fait que les
+     blocs de calcul prennent trop de temps : le fichier temporaire
+     est créé avant que le résultat n'y figure, et
+     `org-babel-comint-eval-invisibly-and-wait-for-file`, voyant ce
+     fichier, sort donc sans attendre la fin de l'exécution Julia, et
+     retourne un fichier encore vide. Lors de la seconde exécution, le
+     fichier est plein, et correctement affiché. Workaround : créer un
+     autre fichier temporaire avec une instruction arbitraire, et
+     attendre la fin de celui-ci.
    - [X] Pour ~:results value~, ce n'est pas compatible avec polymode,
      alors que polymode marche bien avec ~:results output~... chercher
      pourquoi. De manière générale, la gestion du code pour ~value~
@@ -505,18 +514,21 @@ last statement in BODY, as elisp."
 	  (org-babel-import-elisp-from-file tmp-file "\t"))
 	column-names-p)))
     (output
-     (mapconcat
-      #'org-babel-chomp
-      (butlast
-       (delq nil
-             (mapcar
-              (lambda (line) (when (> (length line) 0) line))
-              (org-babel-comint-with-output
-                  (session org-babel-ess-julia-eoe-indicator)
-                (ob-ess-julia--execute-line-by-line
+     (let ((tmp-file (org-babel-temp-file "ess-julia-"))
+           (tmp-file2 (org-babel-temp-file "ess-julia-")))
+       (org-babel-comint-eval-invisibly-and-wait-for-file
+        session tmp-file2
+        (org-babel-chomp
+         (format "startREPLcopy(\"%s\")\n%s\nendREPLcopy()\nwritedlm(\"%s\", [1 2 3 4])"
+                 (org-babel-process-file-name tmp-file 'noquote)
                  body
-                 org-babel-ess-julia-eoe-indicator)))))
-      "\n"))))
+                 (org-babel-process-file-name tmp-file2 'noquote))))
+       (with-current-buffer session
+      	 (comint-add-to-input-history body))
+       (org-babel-result-cond result-params
+         (with-temp-buffer
+           (insert-file-contents tmp-file)
+           (buffer-string)))))))
 #+end_src
 
 ** DONE La fonction principale : ~org-babel-execute:ess-julia~ [8/8]
@@ -724,7 +736,7 @@ Dans cette fonction :
                               (equal colnames-p "true"))
 			  "1"
                         "false")))
-	  (format "%s = CSV.read(\"%s\", header=%s, delim=\",\");"
+	  (format "%s = CSV.read(\"%s\", DataFrame, header=%s, delim=\",\");"
                   name file header)))
     ;; else, value is not a list: just produce something like "name = value":
     (format "%s = %s;" name (org-babel-ess-julia-quote-csv-field value))))

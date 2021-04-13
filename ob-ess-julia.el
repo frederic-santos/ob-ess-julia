@@ -287,18 +287,21 @@ last statement in BODY, as elisp."
 	  (org-babel-import-elisp-from-file tmp-file "\t"))
 	column-names-p)))
     (output
-     (mapconcat
-      #'org-babel-chomp
-      (butlast
-       (delq nil
-             (mapcar
-              (lambda (line) (when (> (length line) 0) line))
-              (org-babel-comint-with-output
-                  (session org-babel-ess-julia-eoe-indicator)
-                (ob-ess-julia--execute-line-by-line
+     (let ((tmp-file (org-babel-temp-file "ess-julia-"))
+           (tmp-file2 (org-babel-temp-file "ess-julia-")))
+       (org-babel-comint-eval-invisibly-and-wait-for-file
+        session tmp-file2
+        (org-babel-chomp
+         (format "startREPLcopy(\"%s\")\n%s\nendREPLcopy()\nwritedlm(\"%s\", [1 2 3 4])"
+                 (org-babel-process-file-name tmp-file 'noquote)
                  body
-                 org-babel-ess-julia-eoe-indicator)))))
-      "\n"))))
+                 (org-babel-process-file-name tmp-file2 'noquote))))
+       (with-current-buffer session
+      	 (comint-add-to-input-history body))
+       (org-babel-result-cond result-params
+         (with-temp-buffer
+           (insert-file-contents tmp-file)
+           (buffer-string)))))))
 
 (defun org-babel-execute:ess-julia (body params)
   "Execute a block of Julia code.
@@ -420,7 +423,7 @@ This name is extracted from user-specified PARAMS of a code block."
                               (equal colnames-p "true"))
 			  "1"
                         "false")))
-	  (format "%s = CSV.read(\"%s\", header=%s, delim=\",\");"
+	  (format "%s = CSV.read(\"%s\", DataFrame, header=%s, delim=\",\");"
                   name file header)))
     ;; else, value is not a list: just produce something like "name = value":
     (format "%s = %s;" name (org-babel-ess-julia-quote-csv-field value))))
