@@ -4,13 +4,11 @@
 csvp = Base.find_package("CSV") == nothing
 delimp = Base.find_package("DelimitedFiles") == nothing
 pipep = Base.find_package("Pipe") == nothing
-suppp = Base.find_package("Suppressor") == nothing
 if any([csvp, delimp, pipep, suppp])
     using Pkg
     Pkg.add("CSV")
     Pkg.add("DelimitedFiles")
     Pkg.add("Pipe")
-    Pkg.add("Suppressor")
 end
 
 # Load required packages:
