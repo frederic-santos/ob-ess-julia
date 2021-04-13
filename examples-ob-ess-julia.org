@@ -20,18 +20,18 @@ println("Hello world!")
 : Hello world!
 
 #+begin_src ess-julia :results output :exports both :session none
-print(2+3)
+print(2+4)
 #+end_src
 
 #+RESULTS:
-: 5
+: 6
 
 #+begin_src ess-julia :results output :exports both
 a = [1 2 3 4]
 #+end_src
 
 #+RESULTS:
-: 1×4 Array{Int64,2}:
+: 1×4 Matrix{Int64}:
 :  1  2  3  4
 
 ** IN-PROGRESS With ~:results value~
@@ -40,12 +40,12 @@ Basic Julia types (arrays, dictionaries and tuples) are supported. DataFrames, w
 *** DONE Arrays
     CLOSED: [2020-10-06 mar. 18:32]
 #+begin_src ess-julia :results value :exports both
-a = [1 2 3 4]
+a = [3 4 5 6]
 a
 #+end_src
 
 #+RESULTS:
-| 1 | 2 | 3 | 4 |
+| 3 | 4 | 5 | 6 |
 
 *** DONE Dictionaries
     CLOSED: [2020-10-06 mar. 18:33]
@@ -61,17 +61,18 @@ d
 *** DONE Tuples
     CLOSED: [2020-10-06 mar. 18:35]
 #+begin_src ess-julia :results value :exports both
-t = ("org", "mode", "is", "great")
+t = ("org", "mode", "is", "great!")
 t
 #+end_src
 
 #+RESULTS:
-| org   |
-| mode  |
-| is    |
-| great |
+| org    |
+| mode   |
+| is     |
+| great! |
 
-*** IN-PROGRESS DataFrames
+*** DONE DataFrames
+    CLOSED: [2021-04-13 mar. 18:18]
 A basic ~value~ display is possible. By default, ~ob-julia~ considers that the DataFrame has no header; but a header can be added by specifying =:colnames yes= in the block header.
 
 - An example without header:
@@ -102,13 +103,12 @@ dtf = DataFrame(
   6.95   8.14  6.77   5.76;   
   7.58   8.74  12.74  7.71;   
   8.81   8.77  7.11   8.84;   
-  8.33   9.26  7.81   8.47])
-rename!(dtf, [:a, :b, :c, :d])
+  8.33   9.26  7.81   8.47], :auto)
 dtf
   #+end_src
 
   #+RESULTS:
-  |    a |    b |     c |    d |
+  |   x1 |   x2 |    x3 |   x4 |
   |------+------+-------+------|
   | 8.04 | 9.14 |  7.46 | 6.58 |
   | 6.95 | 8.14 |  6.77 | 5.76 |
@@ -126,7 +126,7 @@ Graphical outputs are supported, at least when they are exported with png or pdf
 *** Gallery of examples
 #+begin_src ess-julia :results output graphics file :file example_plots/Plots_scatterplot.png :exports both :height 500 :width 500
 using Plots
-scatter(rand(100), markersize = 6, c = :red)
+scatter(rand(100), markersize = 6, c = :purple)
 #+end_src
 
 #+CAPTION: A scatterplot made with the base ~Plots~ library.
@@ -152,15 +152,15 @@ If a ~:session~ argument is given by the user in the header of a code block, thi
 Consider the following commands within a given Julia session, with ~:results output~ type of display (this includes graphical outputs):
 
 #+begin_src ess-julia :results output :session *juliasession* :exports both
-x = [2, 7, 8, 3]
+x = [2, 7, 8, 4]
 #+end_src
 
 #+RESULTS:
-: 4-element Array{Int64,1}:
+: 4-element Vector{Int64}:
 :  2
 :  7
 :  8
-:  3
+:  4
 
 #+begin_src ess-julia :results output :session *juliasession* :exports both
 x[2]
@@ -174,17 +174,17 @@ push!(x, 3)
 #+end_src
 
 #+RESULTS:
-: 5-element Array{Int64,1}:
+: 5-element Vector{Int64}:
 :  2
 :  7
 :  8
-:  3
+:  4
 :  3
 
 #+begin_src ess-julia :results output graphics file :file example_plots/session_plot_line.png :session *juliasession* :exports both :width 300 :height 300
 using Plots
 y = [1, 3, 2, 4, 5]
-plot(x, y)
+plot(x, y, color = :purple)
 #+end_src
 
 #+RESULTS:
@@ -198,45 +198,42 @@ dtf = DataFrame(
      6.95   8.14  6.77   5.76;
      7.58   8.74  12.74  7.71;
      8.81   8.77  7.11   8.84;
-     8.33   9.26  7.81   8.47])
+     8.33   9.26  7.81   8.47], :auto)
 #+end_src
 
 #+RESULTS:
-#+begin_example
-
-5×4 DataFrame
-│ Row │ x1      │ x2      │ x3      │ x4      │
-│     │ Float64 │ Float64 │ Float64 │ Float64 │
-├─────┼─────────┼─────────┼─────────┼─────────┤
-│ 1   │ 8.04    │ 9.14    │ 7.46    │ 6.58    │
-│ 2   │ 6.95    │ 8.14    │ 6.77    │ 5.76    │
-│ 3   │ 7.58    │ 8.74    │ 12.74   │ 7.71    │
-│ 4   │ 8.81    │ 8.77    │ 7.11    │ 8.84    │
-│ 5   │ 8.33    │ 9.26    │ 7.81    │ 8.47    │
-#+end_example
+: 5×4 DataFrame
+:  Row │ x1       x2       x3       x4
+:      │ Float64  Float64  Float64  Float64
+: ─────┼────────────────────────────────────
+:    1 │    8.04     9.14     7.46     6.58
+:    2 │    6.95     8.14     6.77     5.76
+:    3 │    7.58     8.74    12.74     7.71
+:    4 │    8.81     8.77     7.11     8.84
+:    5 │    8.33     9.26     7.81     8.47
 
 ** IN-PROGRESS Session evaluation with ~:results value~
 The ~:results value~ type of display is also supported, for some data types (arrays, dictionaries, tuples, dataframes). Some examples below.
 
 #+begin_src ess-julia :results value :session *juliasession* :exports both
-root_colors = Dict("marquise" => "orange", "eyrie" => "blue",
+root_colors = Dict("marquise" => "orange", "eyrie" => "navy",
                    "vagabond" => "darkgray", "woodland alliance" => "green")
 #+end_src
 
 #+RESULTS:
 | woodland alliance | green    |
 | marquise          | orange   |
-| eyrie             | blue     |
+| eyrie             | navy     |
 | vagabond          | darkgray |
 
-#+begin_src ess-julia :results output graphics file :file example_plots/plot_session_dtf.png :session *juliasession* :exports both
+#+begin_src ess-julia :results output graphics file :file example_plots/session_plot_dtf.png :session *juliasession* :exports both
 using Plots
-scatter(dtf[:x1], dtf[:x2], markersize = 6, c = :purple)
+scatter(dtf[!, :x1], dtf[!, :x2], markersize = 6, c = :red)
 #+end_src
 
 #+CAPTION: A scatterplot from the previous dataframe.
 #+RESULTS:
-[[file:example_plots/plot_session_dtf.png]]
+[[file:example_plots/session_plot_dtf.png]]
 
 DataFrames can be exported as org tables as well:
 
@@ -334,13 +331,13 @@ Rdtf
 #+RESULTS:
 #+begin_example
 6×5 DataFrame
-│ Row │ Sepal.Length │ Sepal.Width │ Petal.Length │ Petal.Width │ Species │
-│     │ Float64      │ Float64     │ Float64      │ Float64     │ String  │
-├─────┼──────────────┼─────────────┼──────────────┼─────────────┼─────────┤
-│ 1   │ 5.1          │ 3.5         │ 1.4          │ 0.2         │ setosa  │
-│ 2   │ 4.9          │ 3.0         │ 1.4          │ 0.2         │ setosa  │
-│ 3   │ 4.7          │ 3.2         │ 1.3          │ 0.2         │ setosa  │
-│ 4   │ 4.6          │ 3.1         │ 1.5          │ 0.2         │ setosa  │
-│ 5   │ 5.0          │ 3.6         │ 1.4          │ 0.2         │ setosa  │
-│ 6   │ 5.4          │ 3.9         │ 1.7          │ 0.4         │ setosa  │
+ Row │ Sepal.Length  Sepal.Width  Petal.Length  Petal.Width  Species
+     │ Float64       Float64      Float64       Float64      String
+─────┼───────────────────────────────────────────────────────────────
+   1 │          5.1          3.5           1.4          0.2  setosa
+   2 │          4.9          3.0           1.4          0.2  setosa
+   3 │          4.7          3.2           1.3          0.2  setosa
+   4 │          4.6          3.1           1.5          0.2  setosa
+   5 │          5.0          3.6           1.4          0.2  setosa
+   6 │          5.4          3.9           1.7          0.4  setosa
 #+end_example
