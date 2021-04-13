@@ -4,7 +4,7 @@
 csvp = Base.find_package("CSV") == nothing
 delimp = Base.find_package("DelimitedFiles") == nothing
 pipep = Base.find_package("Pipe") == nothing
-if any([csvp, delimp, pipep, suppp])
+if any([csvp, delimp, pipep])
     using Pkg
     Pkg.add("CSV")
     Pkg.add("DelimitedFiles")
