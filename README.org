@@ -15,7 +15,7 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
 
 =#+end_src=
 
-** Implemented features and TODOs [64%]
+** TODO Implemented features and TODOs [71%]
    - [X] External evaluation with verbatim output (~:results output~)
    - [X] External evaluation with well-formatted output (~:results value~), for standard Julia data structures and DataFrames
    - [X] Session evaluation (using inferior ESS processes) with ~:session~ header argument
@@ -25,10 +25,10 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
    - [X] Make ~ob-ess-julia~ compatible with polymode so that ~ess-julia-mode~ can be used as innermode in the src blocks
    - [X] Handling variables passed with ~:var~ header argument
    - [X] Host this package on MELPA
+   - [X] Improve documentation
    - [ ] Handling ~:dir~ header argument to set working directory of ~ess-julia~ session (works, but with a glitch)
    - [ ] Allow for more Julia types to be displayed with ~:results value~ (only arrays, dataframes, dictionaries and tuples are supported to date; other types might work as well but have not be tested yet)
-   - [ ] Better error management
-   - [ ] Improve documentation
+   - [ ] Better error management, in particular for graphical output
    - [ ] Implement some simple unit tests
 
 ** Alternatives for using Julia in Org mode
