@@ -3,10 +3,16 @@
 
 [[https://melpa.org/#/ob-ess-julia][file:https://melpa.org/packages/ob-ess-julia-badge.svg]] [[https://stable.melpa.org/#/ob-ess-julia][file:https://stable.melpa.org/packages/ob-ess-julia-badge.svg]]
 
-* Introduction
+* Important: Disclaimer
+(Monday, October 3, 2022)
+
+Please note that =ob-ess-julia= is deprecated and no longer maintained. Org has now [[https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-julia.html][a built-in support for Julia]], so that =ob-ess-julia= has become pretty useless. All users of =ob-ess-julia= are invited to migrate to the built-in =ob-julia= solution.
+
+* Archive
+** Introduction
 ~ob-ess-julia~ intends to offer a lightweight support for Julia language into Org mode. This is still an incomplete implementation to date, roughly in an alpha stage.
 
-** Why ~ob-ess-julia~ instead of ~ob-julia~?
+*** Why ~ob-ess-julia~ instead of ~ob-julia~?
 Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][julia-repl]], [[https://github.com/gcv/julia-snail][julia-snail]], and [[https://github.com/emacs-ess/ESS][ess-julia]]. Furthermore, Julia can also be used through Jupyter using [[https://github.com/millejoh/emacs-ipython-notebook#ob-ein][ob-ein]] or [[https://github.com/nnicandro/emacs-jupyter#org-mode-source-blocks][emacs-jupyter]]. The present package is based on [[https://github.com/emacs-ess/ESS][ESS]], but it would be unfair to "preempt" the name ~ob-julia~, since using ESS is only one solution among other ones, and cannot be regarded as the canonical solution.
 
 ~ob-ess-julia~ is basically a fork of [[https://github.com/gjkerns/ob-julia][the good old ob-julia]], which is now orphaned. It has also several other forks, and I did not want any confusion among those packages. As a consequence, the general form of src blocks in ~ob-ess-julia~ is:
@@ -15,7 +21,7 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
 
 =#+end_src=
 
-** TODO Implemented features and TODOs [71%]
+*** TODO Implemented features and TODOs [71%]
    - [X] External evaluation with verbatim output (~:results output~)
    - [X] External evaluation with well-formatted output (~:results value~), for standard Julia data structures and DataFrames
    - [X] Session evaluation (using inferior ESS processes) with ~:session~ header argument
@@ -31,13 +37,13 @@ Julia has several backends within Emacs: [[https://github.com/tpapp/julia-repl][
    - [ ] Better error management, in particular for graphical output
    - [ ] Implement some simple unit tests
 
-** Alternatives for using Julia in Org mode
+*** Alternatives for using Julia in Org mode
 - [[https://github.com/shg/ob-julia-vterm.el][ob-julia-vterm]] is a solid alternative, relying on ~julia-vterm~ (which avoids some of the limitations imposed by ESS and/or the usual terminal emulator).
 - Another fork of the original ~ob-julia~ [[https://git.nixo.xyz/nixo/ob-julia][is available online]]. It offers advanced options such as async evaluation.
 - Using a Jupyter Julia kernel from within Emacs is also possible.
 
-* How to use ~ob-ess-julia~
-** Installation and settings
+** How to use ~ob-ess-julia~
+*** Installation and settings
 This package can be installed from MELPA. For instance, if you have [[https://github.com/jwiegley/use-package][use-package]] installed, simply add the following lines to your Emacs initialisation file:
 
 #+begin_src emacs-lisp :results output
@@ -54,10 +60,10 @@ This package can be installed from MELPA. For instance, if you have [[https://gi
         (append org-src-lang-modes '(("ess-julia" . ess-julia)))))
 #+end_src
 
-** Demo
+*** Demo
 Some examples of implemented features can be found in the file ~examples-ob-ess-julia.org~.
 
-** Notes and tips
+*** Notes and tips
 - ~:session~ names should be prefixed an suffixed by ~*~, e.g. ~*julia*~ or ~*mysession*~ are convenient names.
 - The following Julia packages are required: ~CSV~, ~DelimitedFiles~, ~Pipe~. They are used for the ~:result value~ output type. They are loaded (with ~using~) at the beginning of each Julia session started with ~ob-ess-julia~ (which is inelegant; but I couldn't find a better option).
 - I suggest the following settings for the Emacs initialisation file:
@@ -92,5 +98,5 @@ Some examples of implemented features can be found in the file ~examples-ob-ess-
   (company-quickhelp-mode))
   #+end_src
 
-* License
+** License
 This package is under a [[https://en.wikipedia.org/wiki/CeCILL][CeCILL 2.1 license]], which is compatible with GPL license.
